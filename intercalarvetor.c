@@ -24,6 +24,6 @@ int main()
     }
     for (i = 0; i < M; i++)
     {
-        printf("%d ", vet3[i]);
+        printf("%d ", vet3[i]);                                                                                 
     }
 }
