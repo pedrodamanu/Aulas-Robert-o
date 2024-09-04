@@ -7,7 +7,7 @@
 int main()
 {
     char nome[L][C];
-    float nota[L][N], med[M], aux = 0;
+    float nota[L][N], med[M], aux = 0, aux1;
     int i, j, k, n;
     printf("Digite o nome dos alunos: ");
     for (i = 0; i < L; i++)
@@ -40,9 +40,9 @@ int main()
             {
                 if (nota[i][j] > nota[i][j + 1])
                 {
-                    aux = nota[i][j];
+                    aux1 = nota[i][j];
                     nota[i][j] = nota[i][j + 1];
-                    nota[i][j + 1] = aux;
+                    nota[i][j + 1] = aux1;
                 }
             }
         }
