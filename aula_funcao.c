@@ -15,7 +15,7 @@ int main() // TODA FUNÇÃO TEM UMA RESPONSABILIDADE UNICA
 
 // tipo_retorno nome_funcao(parametros)
 // {
-
+//
 // }
 
 int soma(int a, int b)
