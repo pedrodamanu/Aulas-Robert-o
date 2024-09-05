@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #define N 50
 
 int soma(int a, int b);
@@ -6,9 +7,22 @@ int soma(int a, int b);
 
 int main() // TODA FUNÇÃO TEM UMA RESPONSABILIDADE UNICA
 {
-    int x, y, z, t;
+    int x, y, z, t, ss;
     int vet[N];
-    char nome[100];
+    char nome[100], sobreno[100];
+
+
+    ss = strlen(nome); //conta a quantidade de caracteres na string
+    strcpy(nome, sobreno); //substitue o que esta escrito nas duas strings
+    strcat(nome, sobreno); //concatena a string b em a
+    t = strcmp(nome, sobreno); //se t for 0, as duas strings sao iguais, se t for positivo a string a vem antes de b na ordem alfabetica, se for negativo eh o contrario
+
+
+
+
+
+
+
     x = soma(3, 2);
     y = soma(5, 10);
     z = soma(x, y);
