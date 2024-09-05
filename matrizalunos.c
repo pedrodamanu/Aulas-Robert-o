@@ -62,6 +62,10 @@ int main()
         {
             printf("APROVADO\n\n");
         }
+        else if(med[i] >= 4 && med[i] < 7)
+        {
+            printf("RECUPERAÇÃO\n\n");
+        }
         else
         {
             printf("REPROVADO\n\n");
