@@ -68,7 +68,7 @@ int main()
         }
         else
         {
-            printf("REPROVADO\n\n");
+            printf("REPROVADO\n\n"); 
         }
     }
 }
