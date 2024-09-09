@@ -2,6 +2,11 @@
 
 //Pedro Rodrigo Miranda dos Santos, Guilherme Dias Borille
 
+void azul(int dias);
+void verde(int dias);
+void laranja(int dias);
+void vermelho(int dias);
+
 int main()
 {
     int cor = 1, dias;
