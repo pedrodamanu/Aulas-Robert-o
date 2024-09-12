@@ -13,7 +13,7 @@ int main() // TODA FUNÇÃO TEM UMA RESPONSABILIDADE UNICA
 
 
     ss = strlen(nome); //conta a quantidade de caracteres na string
-    strcpy(nome, sobreno); //substitue o que esta escrito nas duas strings
+    strcpy(nome, sobreno); //o conteudo de b vai para a
     strcat(nome, sobreno); //concatena a string b em a
     t = strcmp(nome, sobreno); //se t for 0, as duas strings sao iguais, se t for positivo a string a vem antes de b na ordem alfabetica, se for negativo eh o contrario
 
