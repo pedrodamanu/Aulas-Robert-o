@@ -174,9 +174,9 @@ int main ()
         printf("O MAIOR COEFICIENTE FOI %.2f DO ALUNO ", maior24);
         puts(alunos24[melhor24]);
     }
-    printf("\nA MÉDIA DE COEFICIENTES DA TURMA INFO23 FOI %f\n", med1);
-    printf("\nA MÉDIA DE COEFICIENTES DA TURMA INFO24 FOI %f\n", med2);
-    printf("\nA MÉDIA DE COEFICIENTES DAS TURMAS JUNTAS FOI %f\n", med3);
+    printf("\nA MÉDIA DE COEFICIENTES DA TURMA INFO23 FOI %.2f\n", med1);
+    printf("\nA MÉDIA DE COEFICIENTES DA TURMA INFO24 FOI %.2f\n", med2);
+    printf("\nA MÉDIA DE COEFICIENTES DAS TURMAS JUNTAS FOI %.2f\n", med3);
     
 }
 
