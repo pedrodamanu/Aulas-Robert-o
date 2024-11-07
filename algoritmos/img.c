@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
-testarLimiar();
+void testarLimiar();
+void preencherMatriz();
 
 int **img;
 int main()
@@ -16,13 +17,7 @@ int main()
     }
     printf("Digite o limiar:\n");
     scanf("%d", &lim);
-    for (i = 0; i < l; i++)
-    {
-        for(j = 0; j < c; j++)
-        {
-            img[i][j] = rand()%256;
-        }
-    }
+    preencherMatriz(l, c);
     testarLimiar(lim);
 } 
 
@@ -40,6 +35,18 @@ void testarLimiar(int lim)
             {
                 img[i][j] = 0;
             }
+        }
+    }
+}
+
+void preencherMatriz(int lado, int coluna)
+{
+    int i, j;
+    for (i = 0; i < lado; i++)
+    {
+        for(j = 0; j < coluna; j++)
+        {
+            img[i][j] = rand()%256;
         }
     }
 }
