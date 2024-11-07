@@ -144,6 +144,7 @@ void manterAmigo()
 void adicionarAmigo()
 {
     char strAux[100];
+    int auxDat = 0;
     if(numAmigo == 0)
     {
         amigos = (TAmigo *)malloc(1 * sizeof(TAmigo));
@@ -174,8 +175,16 @@ void adicionarAmigo()
     amigos[numAmigo].email = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
     strcpy(amigos[numAmigo].email, strAux);
 
-    printf("Digite sua data de nascimento: (DD MM AAAA, sem barras)\n");
-    scanf("%d%d%d", &amigos[numAmigo].data_nas.dia, &amigos[numAmigo].data_nas.mes, &amigos[numAmigo].data_nas.ano);
+    while(auxDat == 0)
+    {
+        printf("Digite sua data de nascimento: (DD MM AAAA, sem barras)\n");
+        scanf("%d%d%d", &amigos[numAmigo].data_nas.dia, &amigos[numAmigo].data_nas.mes, &amigos[numAmigo].data_nas.ano);
+        auxDat = valide_data(amigos[numAmigo].data_nas.dia, amigos[numAmigo].data_nas.mes, amigos[numAmigo].data_nas.ano);
+        if (auxDat == 0)
+        {
+            printf("Valor invalido!\n");
+        }
+    }
 
     printf("Qual o seu telefone?\n");
     fflush(stdin);
@@ -183,9 +192,34 @@ void adicionarAmigo()
     fflush(stdin);
     amigos[numAmigo].telefone = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
     strcpy(amigos[numAmigo].telefone, strAux);
-
+    
     numAmigo++;
     system("cls");
+}
+
+void manterLocal()
+{
+    int opLocal = 1;
+    while(opLocal != 0)
+    {
+        printf("1) Adicionar local\n");
+        printf("2) Alterar local\n");
+        printf("3) Excluir local\n");
+        printf("0) Voltar\n");
+        scanf("%d", &opLocal);
+        switch(opLocal)
+        {
+            case 1:
+                adicionarLocal();
+                break;
+            case 2:
+                //alterarLocal();
+                break;
+            case 3:
+                //excluirLocal();
+                break;
+        }
+    }
 }
 
 /*void escolherAulaAlt()
@@ -711,7 +745,7 @@ void liberarPonteiros()
     free(faltas);
     free(cont);
     free(motorista);
-}
+}*/
 int valide_data(int dias, int mes, int ano)
 {
     if (mes > 12 || mes <= 0)
@@ -747,4 +781,4 @@ int valide_data(int dias, int mes, int ano)
         }
     }
     return 1;
-}*/
+}
