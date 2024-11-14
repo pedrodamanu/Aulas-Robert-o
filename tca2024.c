@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include <windows.h>
 
 typedef struct
 {
@@ -14,369 +13,286 @@ typedef struct
 
 typedef struct
 {
-    char *nome;
-    char *nomMat;
-    char *conteudo;
-    TData data;
-    char *atv;
-} TProfessor;
+    int hora;
+    int minuto;
+} THora;
 
 typedef struct
 {
     char *nome;
-    char *turma;
-    TData data;
-} TAluno;
+    char *apelido;
+    char *email;
+    TData data_nas;
+    char *telefone;
+} TAmigo;
+
+typedef struct
+{
+    char *logradouro;
+    int numero;
+    char *bairro;
+    char *cidade;
+    char *estado;
+} TEndereco;
+
+typedef struct
+{
+    char *nome_encontro;
+    TEndereco endereco;
+} TLocal;
+
 
 typedef struct
 {
     char *nome;
-    char *local;
-    char *periodo;
-    int vagas;
-    char *numero;
-    TData data;
-} TCarona;
+} TCategoria;
 
-int lerOpcao();
-int lerProf();
-int lerConteudo();
-int lerAluno();
-void justificaFalta();
-void printarConteudo(int auxAluno);
-void printarFaltas();
-void lerCarona();
-void cadastrarCarona();
-void printarCarona();
-void escolherAulaAlt();
-void alterarAula(int opAula);
-void escolherAulaExc();
-void excluirAula(int opAula);
-void salvarAluno();
-void salvarProf();
-void salvarCarona();
-void recuperarAluno();
-void recuperarProf();
-void recuperarCarona();
+typedef struct
+{
+    TAmigo *amigos;
+    TCategoria *categoria;
+    TData data;
+    THora horario;
+    TLocal local;
+    char *desc;
+} TEncontro;
+
+void lerMenu();
+void manterAmigo();
+void manterLocal();
+void manterCategoria();
+void manterEncontro();
+void Relatorios();
+void adicionarAmigo();
 int valide_data(int dias, int mes, int ano);
 void liberarPonteiros();
 
-TProfessor *cont;
-TAluno *faltas;
-TCarona *motorista;
-int numProf = -1, numAluno = -1, numCar = -1;
+TAmigo *amigos;
+int numAmigo = 0;
 
 int main()
 {
-    SetConsoleOutputCP(65001);
-    recuperarAluno();
-    recuperarProf();
-    recuperarCarona();
-    int op1 = 1, opProf = 1, opAluno = 1;
+    lerMenu();
+}
 
+void lerMenu()
+{
+    int op1 = 1;
     while (op1 != 0)
     {
-        op1 = lerOpcao();
+        printf("Bem vindo!!\n");
+        printf("Selecione a opção desejada: \n");
+        printf("1) Manter amigo\n");
+        printf("2) Manter local\n");
+        printf("3) Manter categoria\n");
+        printf("4) Manter encontro\n");
+        printf("5) Relatorios\n");
+        printf("0) Sair\n");
+        scanf("%d", &op1);
         switch (op1)
         {
         case 1:
-            opProf = 1;
-            while (opProf != 0)
-            {
-                opProf = lerProf();
-                switch (opProf)
-                {
-                case 1:
-                    lerConteudo();
-                    break;
-                case 2:
-                    printarFaltas();
-                    break;
-                case 3:
-                    escolherAulaAlt();
-                    break;
-                case 4:
-                    escolherAulaExc();
-                    break;
-                }
-            }
+            manterAmigo();
             break;
         case 2:
-            opAluno = 1;
-            while (opAluno != 0)
-            {
-                opAluno = lerAluno();
-                switch (opAluno)
-                {
-                case 1:
-                    justificaFalta();
-                    break;
-                case 2:
-                    lerCarona();
-                    break;
-                }
-            }
+            //manterLocal();
+            break;
+        case 3:
+            //manterCategoria();
+            break;
+        case 4:
+            //manterEncontro();
+            break;
+        case 5:
+            //Relatorios();
             break;
         }
     }
-    salvarAluno();
-    salvarProf();
-    salvarCarona();
-    liberarPonteiros();
-}
-
-int lerOpcao()
-{
-    int aux;
-    printf("Bem vindo!!\n");
-    printf("Selecione a opção desejada: \n");
-    printf("1) Sou professor\n");
-    printf("2) Sou aluno\n");
-    printf("0) Encerrar o programa\n");
-    scanf("%d", &aux);
     system("cls");
-    return aux;
 }
 
-int lerProf()
+void manterAmigo()
 {
-    int aux;
-    printf("1) Cadastrar aula\n");
-    printf("2) Ver faltas\n");
-    printf("3) Alterar aula\n");
-    printf("4) Excluir aula\n");
-    printf("0) Voltar\n");
-    scanf("%d", &aux);
-    system("cls");
-    return aux;
-}
-
-int lerConteudo()
-{
-    int auxDat = 0;
-    char strAux[1000];
-    numProf++;
-    cont = (TProfessor *)realloc(cont, (numProf + 1) * sizeof(TProfessor));
-
-    printf("Digite o seu nome: \n"); // leitura do nome do professor
-    fflush(stdin);
-    gets(strAux);
-    fflush(stdin);
-    cont[numProf].nome = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
-    strcpy(cont[numProf].nome, strAux);
-
-    printf("Digite o nome da sua matéria :\n"); // leitura do nome da materia
-    fflush(stdin);
-    gets(strAux);
-    fflush(stdin);
-    cont[numProf].nomMat = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
-    strcpy(cont[numProf].nomMat, strAux);
-
-    printf("Digite a data da sua aula(DD MM AAAA, sem barras): \n");
-    while (auxDat == 0)
+    int opAmigo = 1;
+    while(opAmigo != 0)
     {
-        scanf("%d%d%d", &cont[numProf].data.dia, &cont[numProf].data.mes, &cont[numProf].data.ano);
-        auxDat = valide_data(cont[numProf].data.dia, cont[numProf].data.mes, cont[numProf].data.ano);
-        if (auxDat == 0)
+        printf("1) Adicionar amigo\n");
+        printf("2) Alterar amigo\n");
+        printf("3) Excluir amigo\n");
+        printf("0) Voltar\n");
+        scanf("%d", &opAmigo);
+        switch(opAmigo)
         {
-            printf("Valor invalido!\n");
+            case 1:
+                adicionarAmigo();
+                break;
+            case 2:
+                pesquisarAmigo();
+                break;
+            case 3:
+                //excluirAmigo();
+                break;
         }
     }
-    printf("Digite resumidamente o conteudo que foi lecionado: \n"); // leitura do conteudo
-    fflush(stdin);
-    gets(strAux);
-    fflush(stdin);
-    cont[numProf].conteudo = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
-    strcpy(cont[numProf].conteudo, strAux);
-
-    printf("Digite a atividade pra suprir a falta: \n"); // leitura da atividade
-    fflush(stdin);
-    gets(strAux);
-    fflush(stdin);
-    cont[numProf].atv = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
-    strcpy(cont[numProf].atv, strAux);
-
-    system("cls");
 }
 
-int lerAluno()
-{
-    int aux;
-    printf("1) Justificar falta\n");
-    printf("2) Caronas\n");
-    printf("0) Voltar\n");
-    scanf("%d", &aux);
-    system("cls");
-    return aux;
-}
-
-void justificaFalta()
+void adicionarAmigo()
 {
     char strAux[100];
     int auxDat = 0;
-    numAluno++;
-    faltas = (TAluno *)realloc(faltas, (numAluno + 1) * sizeof(TAluno));
+    if(numAmigo == 0)
+    {
+        amigos = (TAmigo *)malloc(1 * sizeof(TAmigo));
+    }
+    else
+    {
+        amigos = (TAmigo *)realloc(amigos, (numAmigo + 1) * sizeof(TAmigo));
+    }
 
-    printf("Qual seu nome?\n");
+    printf("Qual o nome do amigo?\n");
     fflush(stdin);
     gets(strAux);
     fflush(stdin);
-    faltas[numAluno].nome = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
-    strcpy(faltas[numAluno].nome, strAux);
+    amigos[numAmigo].nome = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+    strcpy(amigos[numAmigo].nome, strAux);
 
-    printf("Qual sua turma?\n");
+    printf("Qual o apelido do amigo?\n");
     fflush(stdin);
     gets(strAux);
     fflush(stdin);
-    faltas[numAluno].turma = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
-    strcpy(faltas[numAluno].turma, strAux);
+    amigos[numAmigo].apelido = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+    strcpy(amigos[numAmigo].apelido, strAux);
 
-    while (auxDat == 0)
-    {
-        printf("Qual dia você que justificar? (DD MM AAAA, sem barras)\n");
-        fflush(stdin);
-        scanf("%d %d %d", &faltas[numAluno].data.dia, &faltas[numAluno].data.mes, &faltas[numAluno].data.ano);
-        fflush(stdin);
-        auxDat = valide_data(faltas[numAluno].data.dia, faltas[numAluno].data.mes, faltas[numAluno].data.ano);
-        if (auxDat == 0)
-        {
-            printf("Valor invalido!\n");
-        }
-    }
-    system("cls");
-    printarConteudo(numAluno);
-}
-
-void printarConteudo(int auxAluno)
-{
-    int i = 0, j = 0;
-    for (i = 0; i < numProf + 1; i++)
-    {
-        if (faltas[auxAluno].data.dia == cont[i].data.dia && faltas[auxAluno].data.mes == cont[i].data.mes && faltas[auxAluno].data.ano == cont[i].data.ano)
-        {
-            printf("Nome do professor: ");
-            puts(cont[i].nome);
-            printf("Nome da matéria: ");
-            puts(cont[i].nomMat);
-            printf("Data: %d/%d/%d\n", cont[i].data.dia, cont[i].data.mes, cont[i].data.ano);
-            printf("Conteudo lecionado: ");
-            puts(cont[i].conteudo);
-            printf("Atividade de reposição: ");
-            puts(cont[i].atv);
-            printf("\n");
-            j++;
-        }
-    }
-    if (j == 0)
-    {
-        printf("Nenhum conteudo no dia selecionado!\n");
-    }
-}
-
-void printarFaltas()
-{
-    int i;
-    for (i = 0; i < numAluno + 1; i++)
-    {
-        printf("Nome do aluno: ");
-        puts(faltas[i].nome);
-        printf("Nome da turma: ");
-        puts(faltas[i].turma);
-        printf("Data: %d/%d/%d\n\n", faltas[i].data.dia, faltas[i].data.mes, faltas[i].data.ano);
-    }
-}
-
-void lerCarona()
-{
-    int opCarona;
-    opCarona = 3;
-    printf("1) Cadastrar carona\n");
-    printf("2) Ver caronas disponiveis\n");
-    scanf("%d", &opCarona);
-    system("cls");
-    switch (opCarona)
-    {
-    case 1:
-        cadastrarCarona();
-        break;
-    case 2:
-        printarCarona();
-        break;
-    }
-}
-
-void cadastrarCarona()
-{
-    int auxDat = 0;
-    char strAux[100];
-    numCar++;
-    motorista = (TCarona *)realloc(cont, (numCar + 1) * sizeof(TCarona));
-
-    printf("Qual seu nome?\n");
+    printf("Qual o email do amigo?\n");
     fflush(stdin);
     gets(strAux);
     fflush(stdin);
-    motorista[numCar].nome = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
-    strcpy(motorista[numCar].nome, strAux);
+    amigos[numAmigo].email = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+    strcpy(amigos[numAmigo].email, strAux);
 
-    printf("Qual o local?\n");
-    fflush(stdin);
-    gets(strAux);
-    fflush(stdin);
-    motorista[numCar].local = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
-    strcpy(motorista[numCar].local, strAux);
-
-    printf("Qual o periodo/horario da carona?\n");
-    fflush(stdin);
-    gets(strAux);
-    fflush(stdin);
-    motorista[numCar].periodo = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
-    strcpy(motorista[numCar].periodo, strAux);
-
-    printf("Tem quantas vagas no carro?\n");
-    scanf("%d", &motorista[numCar].vagas);
-
-    while (auxDat == 0)
+    while(auxDat == 0)
     {
-        printf("Qual a data da carona? (DD MM AAAA, sem barras)\n");
-        scanf("%d%d%d", &motorista[numCar].data.dia, &motorista[numCar].data.mes, &motorista[numCar].data.ano);
-        auxDat = valide_data(motorista[numCar].data.dia, motorista[numCar].data.mes, motorista[numCar].data.ano);
+        printf("Digite sua data de nascimento: (DD MM AAAA, sem barras)\n");
+        scanf("%d%d%d", &amigos[numAmigo].data_nas.dia, &amigos[numAmigo].data_nas.mes, &amigos[numAmigo].data_nas.ano);
+        auxDat = valide_data(amigos[numAmigo].data_nas.dia, amigos[numAmigo].data_nas.mes, amigos[numAmigo].data_nas.ano);
         if (auxDat == 0)
         {
             printf("Valor invalido!\n");
         }
     }
 
-    printf("Qual seu numero pra contato?\n");
+    printf("Qual o seu telefone?\n");
     fflush(stdin);
     gets(strAux);
     fflush(stdin);
-    motorista[numCar].numero = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
-    strcpy(motorista[numCar].numero, strAux);
-
+    amigos[numAmigo].telefone = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+    strcpy(amigos[numAmigo].telefone, strAux);
+    
+    numAmigo++;
     system("cls");
 }
 
-void printarCarona()
+void pesquisarAmigo()
 {
-    int i;
-    for (i = 0; i < numCar + 1; i++)
+    int i, opAmigo;
+    printf("Você deseja selecionar qual amigo?\n");
+    for (i = 0; i < numAmigo; i++)
     {
-        printf("Nome do motorista: ");
-        puts(motorista[i].nome);
-        printf("Local da carona: ");
-        puts(motorista[i].local);
-        printf("Periodo/horario da carona: ");
-        puts(motorista[i].periodo);
-        printf("Numero de vagas: %d\n", motorista[i].vagas);
-        printf("Data: %d/%d/%d\n", motorista[numCar].data.dia, motorista[numCar].data.mes, motorista[numCar].data.ano);
-        printf("Numero pra contato: ");
-        puts(motorista[numCar].numero);
+        printf("%d", i + 1);
+        puts(amigos[i].nome);
         printf("\n");
     }
+    scanf("%d", &opAmigo);
+    alterarAmigo(opAmigo - 1);
 }
 
-void escolherAulaAlt()
+void alterarAmigo(int amg)
+{
+    int opAlt, auxDat = 0;
+    char strAux[100];
+    printf("Você deseja alterar:\n");
+    printf("1) Nome (%s)\n", amigos[amg].nome);
+    printf("2) Apelido (%s)\n", amigos[amg].apelido);
+    printf("3) Email (%s)\n", amigos[amg].email); 
+    printf("4) Alterar data (%d/%d/%d)\n", &amigos[amg].data.dia, &amigos[amg].data.mes, &amigos[amg].data.ano);
+    printf("5) Telefone (%s)\n", amigos[amg].telefone); 
+    scanf("%d", &opAlt);
+    switch(opAlt)
+    {
+        case 1:
+            printf("Digite o novo nome:\n");
+            fflush(stdin);
+            gets(strAux);
+            fflush(stdin);
+            amigos[i].nome = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+            strcpy(amigos[amg].nome, strAux);
+            break;
+        case 2:
+            printf("Digite o novo apelido:\n");
+            fflush(stdin);
+            gets(strAux);
+            fflush(stdin);
+            amigos[amg].apelido = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+            strcpy(amigos[amg].apelido, strAux);
+            break;
+        case 3:
+            printf("Digite o novo email:\n");
+            fflush(stdin);
+            gets(strAux);
+            fflush(stdin);
+            amigos[i].email= (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+            strcpy(amigos[i].email, strAux);
+            break;
+        case 4:
+            while(auxDat == 0)
+            {
+                printf("Digite sua data de nascimento: (DD MM AAAA, sem barras)\n");
+                scanf("%d%d%d", &amigos[numAmigo].data_nas.dia, &amigos[numAmigo].data_nas.mes, &amigos[numAmigo].data_nas.ano);
+                auxDat = valide_data(amigos[numAmigo].data_nas.dia, amigos[numAmigo].data_nas.mes, amigos[numAmigo].data_nas.ano);
+                if (auxDat == 0)
+                {
+                    printf("Valor invalido!\n");
+                }
+            }
+        case 5:
+            printf("Digite o novo telefone:\n");
+            fflush(stdin);
+            gets(strAux);
+            fflush(stdin);
+            amigos[i].telefone = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+            strcpy(amigos[i].telefone, strAux);
+            break;
+        
+    }
+    system("cls");
+}
+
+void manterLocal()
+{
+    int opLocal = 1;
+    while(opLocal != 0)
+    {
+        printf("1) Adicionar local\n");
+        printf("2) Alterar local\n");
+        printf("3) Excluir local\n");
+        printf("0) Voltar\n");
+        scanf("%d", &opLocal);
+        switch(opLocal)
+        {
+            case 1:
+                //adicionarLocal();
+                break;
+            case 2:
+                //alterarLocal();
+                break;
+            case 3:
+                //excluirLocal();
+                break;
+        }
+    }
+}
+
+/*void escolherAulaAlt()
 {
     int i, op;
     if(numProf >= 0)
@@ -738,7 +654,7 @@ void recuperarProf()
                         cont[numProf].nome = (char *)malloc((strlen(str) + 1) * sizeof(char));
                         strcpy(cont[numProf].nome, str);
                         sep++;
-                    }
+                    }#include <windows.h>
                     else if (sep == 1)
                     {
                         cont[numProf].nomMat = (char *)malloc((strlen(str) + 1) * sizeof(char));
@@ -899,7 +815,7 @@ void liberarPonteiros()
     free(faltas);
     free(cont);
     free(motorista);
-}
+}*/
 int valide_data(int dias, int mes, int ano)
 {
     if (mes > 12 || mes <= 0)
