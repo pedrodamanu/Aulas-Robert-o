@@ -64,15 +64,24 @@ void manterCategoria();
 void manterEncontro();
 void Relatorios();
 void adicionarAmigo();
+void pesquisarAmigo(int OpFun);
+void alterarAmigo(int amg);
+void excluirAmigo(int amg);
+void salvarAmigo();
+void recuperarAmigo();
 int valide_data(int dias, int mes, int ano);
+int validarValor(int num, int param1, int param2);
 void liberarPonteiros();
 
 TAmigo *amigos;
+
 int numAmigo = 0;
 
 int main()
 {
+    recuperarAmigo();
     lerMenu();
+    salvarAmigo();
 }
 
 void lerMenu()
@@ -89,6 +98,12 @@ void lerMenu()
         printf("5) Relatorios\n");
         printf("0) Sair\n");
         scanf("%d", &op1);
+
+        if(validarValor(op1, 0, 5) == 0)
+        {
+            lerMenu();
+        }
+
         switch (op1)
         {
         case 1:
@@ -121,16 +136,22 @@ void manterAmigo()
         printf("3) Excluir amigo\n");
         printf("0) Voltar\n");
         scanf("%d", &opAmigo);
+
+        if(validarValor(opAmigo, 0, 3) == 0)
+        {
+            manterAmigo();
+        }
+
         switch(opAmigo)
         {
             case 1:
                 adicionarAmigo();
                 break;
             case 2:
-                pesquisarAmigo();
+                pesquisarAmigo(1);
                 break;
             case 3:
-                //excluirAmigo();
+                pesquisarAmigo(2);
                 break;
         }
     }
@@ -192,18 +213,30 @@ void adicionarAmigo()
     system("cls");
 }
 
-void pesquisarAmigo()
+void pesquisarAmigo(int OpFun)
 {
     int i, opAmigo;
     printf("Você deseja selecionar qual amigo?\n");
     for (i = 0; i < numAmigo; i++)
     {
-        printf("%d", i + 1);
+        printf("%d) ", i + 1);
         puts(amigos[i].nome);
-        printf("\n");
     }
     scanf("%d", &opAmigo);
-    alterarAmigo(opAmigo - 1);
+
+    if(validarValor(opAmigo, 1, numAmigo) == 0)
+    {
+        pesquisarAmigo(OpFun);
+    }
+
+    if (OpFun == 1)
+    {
+        alterarAmigo(opAmigo - 1);
+    }
+    else
+    {
+        excluirAmigo(opAmigo - 1);
+    }
 }
 
 void alterarAmigo(int amg)
@@ -214,7 +247,7 @@ void alterarAmigo(int amg)
     printf("1) Nome (%s)\n", amigos[amg].nome);
     printf("2) Apelido (%s)\n", amigos[amg].apelido);
     printf("3) Email (%s)\n", amigos[amg].email); 
-    printf("4) Alterar data (%d/%d/%d)\n", &amigos[amg].data.dia, &amigos[amg].data.mes, &amigos[amg].data.ano);
+    printf("4) Alterar data (%d/%d/%d)\n", &amigos[amg].data_nas.dia, &amigos[amg].data_nas.mes, &amigos[amg].data_nas.ano);
     printf("5) Telefone (%s)\n", amigos[amg].telefone); 
     scanf("%d", &opAlt);
     switch(opAlt)
@@ -224,7 +257,7 @@ void alterarAmigo(int amg)
             fflush(stdin);
             gets(strAux);
             fflush(stdin);
-            amigos[i].nome = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+            amigos[amg].nome = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
             strcpy(amigos[amg].nome, strAux);
             break;
         case 2:
@@ -240,15 +273,15 @@ void alterarAmigo(int amg)
             fflush(stdin);
             gets(strAux);
             fflush(stdin);
-            amigos[i].email= (char *)malloc((strlen(strAux) + 1) * sizeof(char));
-            strcpy(amigos[i].email, strAux);
+            amigos[amg].email= (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+            strcpy(amigos[amg].email, strAux);
             break;
         case 4:
             while(auxDat == 0)
             {
                 printf("Digite sua data de nascimento: (DD MM AAAA, sem barras)\n");
-                scanf("%d%d%d", &amigos[numAmigo].data_nas.dia, &amigos[numAmigo].data_nas.mes, &amigos[numAmigo].data_nas.ano);
-                auxDat = valide_data(amigos[numAmigo].data_nas.dia, amigos[numAmigo].data_nas.mes, amigos[numAmigo].data_nas.ano);
+                scanf("%d%d%d", &amigos[amg].data_nas.dia, &amigos[amg].data_nas.mes, &amigos[amg].data_nas.ano);
+                auxDat = valide_data(amigos[amg].data_nas.dia, amigos[amg].data_nas.mes, amigos[amg].data_nas.ano);
                 if (auxDat == 0)
                 {
                     printf("Valor invalido!\n");
@@ -259,12 +292,36 @@ void alterarAmigo(int amg)
             fflush(stdin);
             gets(strAux);
             fflush(stdin);
-            amigos[i].telefone = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
-            strcpy(amigos[i].telefone, strAux);
+            amigos[amg].telefone = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+            strcpy(amigos[amg].telefone, strAux);
             break;
         
     }
     system("cls");
+}
+
+void excluirAmigo(int amg)
+{
+    int i, conf;
+    printf("Tem certeza que quer excluir o amigo?\n");
+    printf("1) Sim\n2) Não\n");
+    
+    scanf("%d", &conf);
+    if (conf == 1)
+    {
+        for(i = amg; i < numAmigo - 1; i++)
+        {
+            amigos[i] = amigos[i + 1];
+        }
+        numAmigo--;
+        amigos = (TAmigo *)realloc(amigos, numAmigo * sizeof(TAmigo));
+        system("cls");
+    }
+    else
+    {
+        system("cls");
+        return;
+    }
 }
 
 void manterLocal()
@@ -292,269 +349,37 @@ void manterLocal()
     }
 }
 
-/*void escolherAulaAlt()
+
+
+void salvarAmigo()
 {
-    int i, op;
-    if(numProf >= 0)
-    {
-        printf("Qual aula voce deseja alterar? (0 = Voltar)\n");
-        for(i = 0; i < numProf + 1; i++)
-        {
-            printf("%d) Nome do professor: ", i + 1);
-            puts(cont[i].nome);
-            printf("Materia: ");
-            puts(cont[i].nomMat);
-            printf("Data: %d/%d/%d\n", cont[i].data.dia, cont[i].data.mes, cont[i].data.ano);
-            printf("Conteudo lecionado: ");
-            puts(cont[i].conteudo);
-            printf("Atividade: ");
-            puts(cont[i].atv);
-            printf("\n");
-        }
-        scanf("%d", &op);
-        if(op < 0 || op > numAluno + 1)
-        {
-            printf("Valor invalido!\n");
-            system("cls");
-        }
-        else if (op == 0)
-        {
-            system("cls");
-            return;
-        }
-        else
-        {
-            system("cls");
-            op--;
-            alterarAula(op);
-        }
-    }
-    else
-    {
-        printf("Ainda não existe nenhuma aula cadastrada\n");
-    }
-}
-
-void alterarAula(int opAula)
-{
-    int i, opAlt = 6, auxDat = 0;
-    char strAux[100];
-    while(opAlt != 0)
-    {
-        printf("Voce deseja alterar:\n");
-        printf("1) Nome do professor\n");
-        printf("2) Nome da materia\n");
-        printf("3) Data\n");
-        printf("4) Conteudo lecionado\n");
-        printf("5) Atividade\n");
-        printf("0) Não desejo alterar mais nada na aula\n");
-        scanf("%d", &opAlt);
-        system("cls");
-        switch(opAlt)
-        {
-            case 1:
-                printf("Digite o novo nome: \n");
-                fflush(stdin);
-                gets(strAux);
-                fflush(stdin);
-                cont[opAula].nome = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
-                strcpy(cont[opAula].nome, strAux);
-                system("cls");
-                break;
-            case 2:
-                printf("Digite o novo nome: \n");
-                fflush(stdin);
-                gets(strAux);
-                fflush(stdin);
-                cont[opAula].nomMat = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
-                strcpy(cont[opAula].nomMat, strAux);
-                system("cls");
-                break;
-            case 3:
-                printf("Digite a nova data: \n");
-                auxDat = 0;
-                while (auxDat == 0)
-                {
-                    scanf("%d%d%d", &cont[opAula].data.dia, &cont[opAula].data.mes, &cont[opAula].data.ano);
-                    auxDat = valide_data(cont[opAula].data.dia, cont[opAula].data.mes, cont[opAula].data.ano);
-                    if (auxDat == 0)
-                    {
-                        printf("Valor invalido!\n");
-                    }
-                }
-                system("cls");
-                break;
-            case 4:
-                printf("Digite o novo conteudo: \n");
-                fflush(stdin);
-                gets(strAux);
-                fflush(stdin);
-                cont[opAula].conteudo = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
-                strcpy(cont[opAula].conteudo, strAux);
-                system("cls");
-                break;
-            case 5:
-                printf("Digite a nova atividade: \n");
-                fflush(stdin);
-                gets(strAux);
-                fflush(stdin);
-                cont[opAula].atv = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
-                strcpy(cont[opAula].atv, strAux);
-                system("cls");
-                break;
-        }
-    }
-}
-
-void escolherAulaExc()
-{
-    int i, op;
-    if(numProf >= 0)
-    {
-        printf("Qual aula voce deseja excluir? (0 = Voltar)\n");
-        for(i = 0; i < numProf + 1; i++)
-        {
-            printf("%d) Nome do professor: ", i + 1);
-            puts(cont[i].nome);
-            printf("Materia: ");
-            puts(cont[i].nomMat);
-            printf("Data: %d/%d/%d\n", cont[i].data.dia, cont[i].data.mes, cont[i].data.ano);
-            printf("Conteudo lecionado: ");
-            puts(cont[i].conteudo);
-            printf("Atividade: ");
-            puts(cont[i].atv);
-            printf("\n");
-        }
-        scanf("%d", &op);
-        if(op < 0 || op > numAluno + 1)
-        {
-            printf("Valor invalido!\n");
-            system("cls");
-        }
-        else if (op == 0)
-        {
-            system("cls");
-            return;
-        }
-        else
-        {
-            system("cls");
-            op--;
-            excluirAula(op);
-        }
-    }
-    else
-    {
-        printf("Ainda não existe nenhuma aula cadastrada\n");
-    }
-}
-
-void excluirAula(int opAula)
-{
-    int i, j, conf;
-    printf("Tem certeza que quer excluir a aula?\n");
-    printf("1) Sim\n2) Não\n");
-    scanf("%d", &conf);
-    if (conf == 1)
-    {
-        for(i = opAula; i < numProf; i++)
-        {
-            cont[i].nome = (char *)malloc((strlen(cont[i + 1].nome) + 1) * sizeof(char));
-            strcpy(cont[i].nome, cont[i + 1].nome);
-
-            cont[i].nomMat = (char *)malloc((strlen(cont[i + 1].nomMat) + 1) * sizeof(char));
-            strcpy(cont[i].nomMat, cont[i + 1].nomMat);
-
-            cont[i].data.dia == cont[i + 1].data.dia;
-            cont[i].data.mes == cont[i + 1].data.mes;
-            cont[i].data.ano == cont[i + 1].data.ano;
-
-            cont[i].conteudo = (char *)malloc((strlen(cont[i + 1].conteudo) + 1) * sizeof(char));
-            strcpy(cont[i].conteudo, cont[i + 1].conteudo);
-
-            cont[i].atv = (char *)malloc((strlen(cont[i + 1].atv) + 1) * sizeof(char));
-            strcpy(cont[i].atv, cont[i + 1].atv);
-        }
-        numProf--;
-        cont = (TProfessor *)realloc(cont, (numProf + 1) * sizeof(TProfessor));
-        system("cls");
-    }
-    else
-    {
-        system("cls");
-        return;
-    }
-}
-
-void salvarAluno()
-{
-    int i, j;
+    int i;
     FILE *pArq;
 
-    pArq = fopen("alunosBD.txt", "w");
-    for (i = 0; i < numAluno + 1; i++)
+    pArq = fopen("amigosBD.txt", "w");
+    for (i = 0; i < numAmigo; i++)
     {
-        fprintf(pArq, "%s;", faltas[i].nome);
-        fprintf(pArq, "%s;", faltas[i].turma);
-        fprintf(pArq, "%d;", faltas[i].data.dia);
-        fprintf(pArq, "%d;", faltas[i].data.mes);
-        fprintf(pArq, "%d;", faltas[i].data.ano);
+        fprintf(pArq, "%s;", amigos[i].nome);
+        fprintf(pArq, "%s;", amigos[i].apelido);
+        fprintf(pArq, "%s;", amigos[i].email);
+        fprintf(pArq, "%d;", amigos[i].data_nas.dia);
+        fprintf(pArq, "%d;", amigos[i].data_nas.mes);
+        fprintf(pArq, "%d;", amigos[i].data_nas.ano);
+        fprintf(pArq, "%s;", amigos[i].telefone);
         fprintf(pArq, "%c", '\n');
     }
     fclose(pArq);
 }
 
-void salvarProf()
-{
-    int i, j;
-    FILE *pArq1;
-
-    pArq1 = fopen("profBD.txt", "w");
-    for (i = 0; i < numProf + 1; i++)
-    {
-        fprintf(pArq1, "%s;", cont[i].nome);
-        fprintf(pArq1, "%s;", cont[i].nomMat);
-        fprintf(pArq1, "%d;", cont[i].data.dia);
-        fprintf(pArq1, "%d;", cont[i].data.mes);
-        fprintf(pArq1, "%d;", cont[i].data.ano);
-        fprintf(pArq1, "%s;", cont[i].conteudo);
-        fprintf(pArq1, "%s;", cont[i].atv);
-        fprintf(pArq1, "%c", '\n');
-    }
-    fclose(pArq1);
-}
-
-void salvarCarona()
-{
-    int i, j;
-    FILE *pArq2;
-
-    pArq2 = fopen("caronasBD.txt", "w");
-    for (i = 0; i <  1; i++)
-    {
-        fprintf(pArq2, "%s;", motorista[i].nome);
-        fprintf(pArq2, "%s;", motorista[i].local);
-        fprintf(pArq2, "%s;", motorista[i].periodo);
-        fprintf(pArq2, "%d;", motorista[i].vagas);
-        fprintf(pArq2, "%d;", motorista[i].data.dia);
-        fprintf(pArq2, "%d;", motorista[i].data.mes);
-        fprintf(pArq2, "%d;", motorista[i].data.ano);
-        fprintf(pArq2, "%s;", motorista[i].numero);
-        fprintf(pArq2, "%c", '\n');
-    }
-    fclose(pArq2);
-}
-
-void recuperarAluno()
+void recuperarAmigo()
 {
     int i = 0, sep = 0;
     char c, str[100];
     FILE *pArq;
 
-    pArq = fopen("alunosBD.txt", "r");
+    pArq = fopen("amigosBD.txt", "r");
     if (pArq)
     {
-        numAluno++;
         while (!feof(pArq))
         {
             c = fgetc(pArq);
@@ -571,52 +396,63 @@ void recuperarAluno()
                 {
                     if (sep == 0)
                     {
-                        if (numAluno == 0)
+                        if (numAmigo == 0)
                         {
-                            faltas = (TAluno *)malloc(1 * sizeof(TAluno));
+                            amigos = (TAmigo *)malloc(1 * sizeof(TAmigo));
                         }
                         else
                         {
-                            faltas = (TAluno *)realloc(faltas, (numAluno + 1) * sizeof(TAluno));
+                            amigos = (TAmigo *)realloc(amigos, (numAmigo + 1) * sizeof(TAmigo));
                         }
-                        faltas[numAluno].nome = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(faltas[numAluno].nome, str);
+                        amigos[numAmigo].nome = (char *)malloc((strlen(str) + 1) * sizeof(char));
+                        strcpy(amigos[numAmigo].nome, str);
                         sep++;
                     }
                     else if (sep == 1)
                     {
-                        faltas[numAluno].turma = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(faltas[numAluno].turma, str);
+                        amigos[numAmigo].apelido = (char *)malloc((strlen(str) + 1) * sizeof(char));
+                        strcpy(amigos[numAmigo].apelido, str);
                         sep++;
                     }
                     else if (sep == 2)
                     {
-                        faltas[numAluno].data.dia = atoi(str);
+                        amigos[numAmigo].email = (char *)malloc((strlen(str) + 1) * sizeof(char));
+                        strcpy(amigos[numAmigo].email, str);
                         sep++;
                     }
                     else if (sep == 3)
                     {
-                        faltas[numAluno].data.mes = atoi(str);
+                        amigos[numAmigo].data_nas.dia = atoi(str);
                         sep++;
                     }
                     else if (sep == 4)
                     {
-                        faltas[numAluno].data.ano = atoi(str);
+                        amigos[numAmigo].data_nas.mes = atoi(str);
+                        sep++;
+                    }
+                    else if (sep == 5)
+                    {
+                        amigos[numAmigo].data_nas.ano = atoi(str);
+                        sep++;
+                    }
+                    else if (sep == 6)
+                    {
+                        amigos[numAmigo].telefone = (char *)malloc((strlen(str) + 1) * sizeof(char));
+                        strcpy(amigos[numAmigo].telefone, str);
                         sep++;
                     }
                 }
                 else
                 {
-                    numAluno++;
+                    numAmigo++;
                     sep = 0;
                 }
             }
         }
-    numAluno--;
     }
     fclose(pArq);
 }
-
+/*
 void recuperarProf()
 {
     int i = 0, sep = 0;
@@ -793,10 +629,10 @@ void recuperarCarona()
 void liberarPonteiros()
 {
     int i;
-    for (i = 0; i < numAluno + 1; i++)
+    for (i = 0; i < numAmigo + 1; i++)
     {
-        free(faltas[i].nome);
-        free(faltas[i].turma);
+        free(amigos[i].nome);
+        free(amigos[i].turma);
     }
     for (i = 0; i < numProf + 1; i++)
     {
@@ -812,10 +648,20 @@ void liberarPonteiros()
         free(motorista[i].local);
         free(motorista[i].numero);
     }
-    free(faltas);
+    free(amigos);
     free(cont);
     free(motorista);
 }*/
+
+int validarValor(int num, int param1, int param2)
+{
+    if(num < param1 || num > param2)
+    {
+        printf("Valor digitado eh invalido!\n");
+        return 0;
+    }
+    return 1;
+}
 int valide_data(int dias, int mes, int ano)
 {
     if (mes > 12 || mes <= 0)
