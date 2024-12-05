@@ -3,6 +3,8 @@
 #define C 4
 #define T 2
 
+int valide_data(int dias, int mes, int ano);
+
 typedef struct 
 {
     int dia;
@@ -21,7 +23,7 @@ typedef struct
 int main()
 {
     TAluno turma23[C], turma24[C];
-    int i, j;
+    int i, j, aux;
     printf("BEM VINDO!\n");
     for (i = 0; i < C; i++)
     {
@@ -92,17 +94,78 @@ int main()
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    for(i = 0; i < C; i++)
+    
+    i = 0;
+    while(i < C)
     {
         printf("Digite a data de nascimento do aluno ");
         puts(turma23[i].nome);
         scanf("%d%d%d", &turma23[i].dtNas.dia, &turma23[i].dtNas.mes, &turma23[i].dtNas.ano);
+        aux = valide_data(turma23[i].dtNas.dia, turma23[i].dtNas.mes, turma23[i].dtNas.ano);
+        if(aux == 1)
+        {
+            i++;
+        }
+        else
+        {
+            printf("Data invalida!!!\n");
+        }
     }
+    i = 0;
     for(i = 0; i < C; i++)
     {
         printf("Digite a data de nascimento do aluno ");
         puts(turma24[i].nome);
         scanf("%d%d%d", &turma24[i].dtNas.dia, &turma24[i].dtNas.mes, &turma24[i].dtNas.ano);
+        aux = valide_data(turma24[i].dtNas.dia, turma24[i].dtNas.mes, turma24[i].dtNas.ano);
+        if(aux == 1)
+        {
+            i++;
+        }
+        else
+        {
+            printf("Data invalida!!!\n");
+        }
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    printf("")
+}
+
+int valide_data(int dias, int mes, int ano)
+{
+    if (mes > 12 || mes <= 0)
+    {
+        return 0;
+    }
+    if (mes == 1 || mes == 3 || mes == 5 || mes == 7 || mes == 8 || mes == 10 || mes == 12)
+    {
+        if (dias <= 0 || dias > 31)
+        {
+            return 0;
+        }
+    }
+    if (mes == 4 || mes == 6 || mes == 9 || mes == 11)
+    {
+        if (dias <= 0 || dias > 30)
+        {
+            return 0;
+        }
+    }
+    if (ano % 4 == 0 && mes == 2)
+    {
+        if (dias <= 0 || dias > 29)
+        {
+            return 0;
+        }
+    }
+    else if (mes == 2)
+    {
+        if (dias <= 0 || dias > 28)
+        {
+            return 0;
+        }
+    }
+    return 1;
 }
