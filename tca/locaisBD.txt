@@ -1,0 +1,2 @@
+bonna;rua da praça;789;centro;matinhos;parana;
+praia;rua atlantica;56;caioba;matinhos;parana;

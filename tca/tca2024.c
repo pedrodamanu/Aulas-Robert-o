@@ -64,24 +64,33 @@ void manterCategoria();
 void manterEncontro();
 void Relatorios();
 void adicionarAmigo();
+void adicionarLocal();
 void pesquisarAmigo(int OpFun);
+void pesquisarLocal(int OpFun);
 void alterarAmigo(int amg);
+void alterarLocal(int loc);
 void excluirAmigo(int amg);
+void excluirLocal(int loc);
 void salvarAmigo();
+void salvarLocal();
 void recuperarAmigo();
+void recuperarLocal();
 int valide_data(int dias, int mes, int ano);
 int validarValor(int num, int param1, int param2);
 void liberarPonteiros();
 
 TAmigo *amigos;
+TLocal *locais;
 
 int numAmigo = 0;
+int numLocal = 0;
 
 int main()
 {
     recuperarAmigo();
     lerMenu();
     salvarAmigo();
+    salvarLocal();
 }
 
 void lerMenu()
@@ -110,7 +119,7 @@ void lerMenu()
             manterAmigo();
             break;
         case 2:
-            //manterLocal();
+            manterLocal();
             break;
         case 3:
             //manterCategoria();
@@ -171,23 +180,23 @@ void adicionarAmigo()
     }
 
     printf("Qual o nome do amigo?\n");
-    fflush(stdin);
+    __fpurge(stdin);
     gets(strAux);
-    fflush(stdin);
+    __fpurge(stdin);
     amigos[numAmigo].nome = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
     strcpy(amigos[numAmigo].nome, strAux);
 
     printf("Qual o apelido do amigo?\n");
-    fflush(stdin);
+    __fpurge(stdin);
     gets(strAux);
-    fflush(stdin);
+    __fpurge(stdin);
     amigos[numAmigo].apelido = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
     strcpy(amigos[numAmigo].apelido, strAux);
 
     printf("Qual o email do amigo?\n");
-    fflush(stdin);
+    __fpurge(stdin);
     gets(strAux);
-    fflush(stdin);
+    __fpurge(stdin);
     amigos[numAmigo].email = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
     strcpy(amigos[numAmigo].email, strAux);
 
@@ -203,9 +212,9 @@ void adicionarAmigo()
     }
 
     printf("Qual o seu telefone?\n");
-    fflush(stdin);
+    __fpurge(stdin);
     gets(strAux);
-    fflush(stdin);
+    __fpurge(stdin);
     amigos[numAmigo].telefone = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
     strcpy(amigos[numAmigo].telefone, strAux);
     
@@ -254,25 +263,25 @@ void alterarAmigo(int amg)
     {
         case 1:
             printf("Digite o novo nome:\n");
-            fflush(stdin);
+            __fpurge(stdin);
             gets(strAux);
-            fflush(stdin);
+            __fpurge(stdin);
             amigos[amg].nome = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
             strcpy(amigos[amg].nome, strAux);
             break;
         case 2:
             printf("Digite o novo apelido:\n");
-            fflush(stdin);
+            __fpurge(stdin);
             gets(strAux);
-            fflush(stdin);
+            __fpurge(stdin);
             amigos[amg].apelido = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
             strcpy(amigos[amg].apelido, strAux);
             break;
         case 3:
             printf("Digite o novo email:\n");
-            fflush(stdin);
+            __fpurge(stdin);
             gets(strAux);
-            fflush(stdin);
+            __fpurge(stdin);
             amigos[amg].email= (char *)malloc((strlen(strAux) + 1) * sizeof(char));
             strcpy(amigos[amg].email, strAux);
             break;
@@ -289,9 +298,9 @@ void alterarAmigo(int amg)
             }
         case 5:
             printf("Digite o novo telefone:\n");
-            fflush(stdin);
+            __fpurge(stdin);
             gets(strAux);
-            fflush(stdin);
+            __fpurge(stdin);
             amigos[amg].telefone = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
             strcpy(amigos[amg].telefone, strAux);
             break;
@@ -334,22 +343,208 @@ void manterLocal()
         printf("3) Excluir local\n");
         printf("0) Voltar\n");
         scanf("%d", &opLocal);
+        if(validarValor(opLocal, 0, 3) == 0)
+        {
+            manterLocal();
+        }
+
         switch(opLocal)
         {
             case 1:
-                //adicionarLocal();
+                adicionarLocal();
                 break;
             case 2:
-                //alterarLocal();
+                pesquisarLocal(1);
                 break;
             case 3:
-                //excluirLocal();
+                pesquisarLocal(2);
+                int i;
+                for(i = 0; i < numLocal; i++)
+                {
+                    printf("%s\n", locais[i].nome_encontro);
+                    printf("%s\n", locais[i].endereco.logradouro);
+                    printf("%i\n", locais[i].endereco.numero);
+                    printf("%s\n", locais[i].endereco.bairro);
+                    printf("%s\n", locais[i].endereco.cidade);
+                    printf("%s\n", locais[i].endereco.estado);
+                }
                 break;
         }
     }
 }
 
+void adicionarLocal()
+{
+    char strAux[100];
+    int auxDat = 0;
+    if(numAmigo == 0)
+    {
+        locais = (TLocal *)malloc(1 * sizeof(TLocal));
+    }
+    else
+    {
+        locais = (TLocal *)realloc(locais, (numLocal + 1) * sizeof(TLocal));
+    }
 
+    printf("Onde será o encontro?\n");
+    __fpurge(stdin);
+    gets(strAux);
+    __fpurge(stdin);
+    locais[numLocal].nome_encontro = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+    strcpy(locais[numLocal].nome_encontro, strAux);
+
+    printf("Qual o logradouro?\n");
+    __fpurge(stdin);
+    gets(strAux);
+    __fpurge(stdin);
+    locais[numLocal].endereco.logradouro = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+    strcpy(locais[numLocal].endereco.logradouro, strAux);
+
+    printf("Qual o numero do endereço?\n");
+    scanf("%d", &locais[numLocal].endereco.numero);
+
+    printf("Qual o bairro?\n");
+    __fpurge(stdin);
+    gets(strAux);
+    __fpurge(stdin);
+    locais[numLocal].endereco.bairro = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+    strcpy(locais[numLocal].endereco.bairro, strAux);
+
+    printf("Qual a cidade?\n");
+    __fpurge(stdin);
+    gets(strAux);
+    __fpurge(stdin);
+    locais[numLocal].endereco.cidade = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+    strcpy(locais[numLocal].endereco.cidade, strAux);
+
+    printf("Qual o estado?\n");
+    __fpurge(stdin);
+    gets(strAux);
+    __fpurge(stdin);
+    locais[numLocal].endereco.estado = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+    strcpy(locais[numLocal].endereco.estado, strAux);
+    
+    numLocal++;
+    system("cls");
+}
+
+void pesquisarLocal(int OpFun)
+{
+    int i, opLocal;
+    printf("Você deseja selecionar qual local?\n");
+    for (i = 0; i < numLocal; i++)
+    {
+        printf("%d) ", i + 1);
+        puts(locais[i].nome_encontro);
+    }
+    scanf("%d", &opLocal);
+
+    if(validarValor(opLocal, 1, numLocal) == 0)
+    {
+        pesquisarAmigo(OpFun);
+    }
+
+    if (OpFun == 1)
+    {
+        alterarLocal(opLocal - 1);
+    }
+    else
+    {
+        excluirLocal(opLocal - 1);
+    }
+}
+
+void alterarLocal(int loc)
+{
+    int opAlt, auxDat = 0;
+    char strAux[100];
+    printf("Você deseja alterar:\n");
+    printf("1) Local do encontro (%s)\n", locais[loc].nome_encontro);
+    printf("2) Logradouro (%s)\n", locais[loc].endereco.logradouro);
+    printf("3) Numero (%d)\n", locais[loc].endereco.numero); 
+    printf("4) Bairro (%s)\n", locais[loc].endereco.bairro);
+    printf("5) Cidade (%s)\n", locais[loc].endereco.cidade); 
+    printf("6) Estado (%s)\n", locais[loc].endereco.estado); 
+    scanf("%d", &opAlt);
+
+    if(validarValor(opAlt, 1, 6) == 0)
+    {
+        alterarLocal(loc);
+    }
+
+    switch(opAlt)
+    {
+        case 1:
+            printf("Digite o novo local:\n");
+            __fpurge(stdin);
+            gets(strAux);
+            __fpurge(stdin);
+            locais[loc].nome_encontro = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+            strcpy(locais[loc].nome_encontro, strAux);
+            break;
+        case 2:
+            printf("Digite o novo logradouro:\n");
+            __fpurge(stdin);
+            gets(strAux);
+            __fpurge(stdin);
+            locais[loc].endereco.logradouro = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+            strcpy(locais[loc].endereco.logradouro, strAux);
+            break;
+        case 3:
+            printf("Digite o novo numero:\n");
+            scanf("%d", &locais[loc].endereco.numero);
+            break;
+        case 4:
+            printf("Digite o novo bairro:\n");
+            __fpurge(stdin);
+            gets(strAux);
+            __fpurge(stdin);
+            locais[loc].endereco.bairro = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+            strcpy(locais[loc].endereco.bairro, strAux);
+            break;
+        case 5:
+            printf("Digite a nova cidade:\n");
+            __fpurge(stdin);
+            gets(strAux);
+            __fpurge(stdin);
+            locais[loc].endereco.cidade = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+            strcpy(locais[loc].endereco.cidade, strAux);
+            break;
+        case 6:
+            printf("Digite o novo estado:\n");
+            __fpurge(stdin);
+            gets(strAux);
+            __fpurge(stdin);
+            locais[loc].endereco.estado = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+            strcpy(locais[loc].endereco.estado, strAux);
+            break;
+    }
+    system("cls");
+}
+
+void excluirLocal(int loc)
+{
+    int i, conf;
+    printf("Tem certeza que quer excluir o local?\n");
+    printf("1) Sim\n2) Não\n");
+    
+    scanf("%d", &conf);
+    if (conf == 1)
+    {
+        for(i = loc; i < numLocal - 1; i++)
+        {
+            locais[i] = locais[i + 1];
+        }
+        numLocal--;
+        locais = (TLocal *)realloc(locais, numLocal * sizeof(TLocal));
+        system("cls");
+    }
+    else
+    {
+        system("cls");
+        return;
+    }
+}
 
 void salvarAmigo()
 {
@@ -366,6 +561,25 @@ void salvarAmigo()
         fprintf(pArq, "%d;", amigos[i].data_nas.mes);
         fprintf(pArq, "%d;", amigos[i].data_nas.ano);
         fprintf(pArq, "%s;", amigos[i].telefone);
+        fprintf(pArq, "%c", '\n');
+    }
+    fclose(pArq);
+}
+
+void salvarLocal()
+{
+    int i;
+    FILE *pArq;
+
+    pArq = fopen("locaisBD.txt", "w");
+    for (i = 0; i < numLocal; i++)
+    {
+        fprintf(pArq, "%s;", locais[i].nome_encontro);
+        fprintf(pArq, "%s;", locais[i].endereco.logradouro);
+        fprintf(pArq, "%i;", locais[i].endereco.numero);
+        fprintf(pArq, "%s;", locais[i].endereco.bairro);
+        fprintf(pArq, "%s;", locais[i].endereco.cidade);
+        fprintf(pArq, "%s;", locais[i].endereco.estado);
         fprintf(pArq, "%c", '\n');
     }
     fclose(pArq);
@@ -452,206 +666,19 @@ void recuperarAmigo()
     }
     fclose(pArq);
 }
-/*
-void recuperarProf()
-{
-    int i = 0, sep = 0;
-    char c, str[100];
-    FILE *pArq;
-
-    pArq = fopen("profBD.txt", "r");
-    if (pArq)
-    {
-        numProf++;
-        while (!feof(pArq))
-        {
-            c = fgetc(pArq);
-
-            if (c != ';' && c != '\n' && c != EOF)
-            {
-                str[i++] = c;
-            }
-            else if (c == ';' || c == '\n')
-            {
-                str[i] = '\0';
-                i = 0;
-                if (c == ';')
-                {
-                    if (sep == 0)
-                    {
-                        if (numProf == 0)
-                        {
-                            cont = (TProfessor *)malloc(1 * sizeof(TProfessor));
-                        }
-                        else
-                        {
-                            cont = (TProfessor *)realloc(cont, (numProf + 1) * sizeof(TProfessor));
-                        }
-                        cont[numProf].nome = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(cont[numProf].nome, str);
-                        sep++;
-                    }#include <windows.h>
-                    else if (sep == 1)
-                    {
-                        cont[numProf].nomMat = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(cont[numProf].nomMat, str);
-                        sep++;
-                    }
-                    else if (sep == 2)
-                    {
-                        cont[numProf].data.dia = atoi(str);
-                        sep++;
-                    }
-                    else if (sep == 3)
-                    {
-                        cont[numProf].data.mes = atoi(str);
-                        sep++;
-                    }
-                    else if (sep == 4)
-                    {
-                        cont[numProf].data.ano = atoi(str);
-                        sep++;
-                    }
-                    else if (sep == 5)
-                    {
-                        cont[numProf].conteudo = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(cont[numProf].conteudo, str);
-                        sep++;
-                    }
-                    else if (sep == 6)
-                    {
-                        cont[numProf].atv = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(cont[numProf].atv, str);
-                        sep++;
-                    }
-                }
-                else
-                {
-                    numProf++;
-                    sep = 0;
-                }
-            }
-        }
-    numProf--;
-    }
-    fclose(pArq);
-}
-
-void recuperarCarona()
-{
-    int i = 0, sep = 0;
-    char c, str[100];
-    FILE *pArq;
-
-    pArq = fopen("caronasBD.txt", "r");
-    if (pArq)
-    {
-        numCar++;
-        while (!feof(pArq))
-        {
-            c = fgetc(pArq);
-
-            if (c != ';' && c != '\n' && c != EOF)
-            {
-                str[i++] = c;
-            }
-            else if (c == ';' || c == '\n')
-            {
-                str[i] = '\0';
-                i = 0;
-                if (c == ';')
-                {
-                    if (sep == 0)
-                    {
-                        if (numCar == 0)
-                        {
-                            motorista = (TCarona *)malloc(1 * sizeof(TCarona));
-                        }
-                        else
-                        {
-                            motorista = (TCarona *)realloc(motorista, (numCar + 1) * sizeof(TCarona));
-                        }
-                        motorista[numCar].nome = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(motorista[numCar].nome, str);
-                        sep++;
-                    }
-                    else if (sep == 1)
-                    {
-                        motorista[numCar].local = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(motorista[numCar].local, str);
-                        sep++;
-                    }
-                    else if (sep == 2)
-                    {
-                        motorista[numCar].periodo = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(motorista[numCar].periodo, str);
-                        sep++;
-                    }
-                    else if (sep == 3)
-                    {
-                        motorista[numCar].vagas = atoi(str);
-                        sep++;
-                    }
-                    else if (sep == 4)
-                    {
-                        motorista[numCar].data.dia = atoi(str);
-                        sep++;                   
-                    }
-                    else if (sep == 5)
-                    {
-                        motorista[numCar].data.mes = atoi(str);
-                        sep++;
-                    }
-                    else if (sep == 6)
-                    {
-                        motorista[numCar].data.ano = atoi(str);
-                        sep++;
-                    }
-                    else if (sep == 7)
-                    {
-                        motorista[numCar].numero = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(motorista[numCar].numero, str);
-                        sep++;
-                    }
-                }
-                else
-                {
-                    numCar++;
-                    sep = 0;
-                }
-            }
-        }
-    numCar--;
-    }
-    fclose(pArq);
-}
 
 void liberarPonteiros()
 {
     int i;
-    for (i = 0; i < numAmigo + 1; i++)
+    for (i = 0; i < numAmigo; i++)
     {
         free(amigos[i].nome);
-        free(amigos[i].turma);
-    }
-    for (i = 0; i < numProf + 1; i++)
-    {
-        free(cont[i].nome);
-        free(cont[i].nomMat);
-        free(cont[i].conteudo);
-        free(cont[i].atv);
-    }
-    for (i = 0; i < numCar + 1; i++)
-    {
-        free(motorista[i].nome);
-        free(motorista[i].periodo);
-        free(motorista[i].local);
-        free(motorista[i].numero);
+        free(amigos[i].apelido);
+        free(amigos[i].email);
+        free(amigos[i].telefone);
     }
     free(amigos);
-    free(cont);
-    free(motorista);
-}*/
+}
 
 int validarValor(int num, int param1, int param2)
 {
