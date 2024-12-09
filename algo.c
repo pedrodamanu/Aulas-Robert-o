@@ -1,21 +1,21 @@
 #include <stdio.h>
-//ALUNOS: PEDRO RODRIGO MIRANDA DOS SANTOS, GUILHERME DIAS BORILLE
 
-void soma(int aux, int b);
-int main()
-{
-    int aux, a, b;
-    printf("Digite 2 valores:");
-    scanf("%d%d", &a, &b);
-    aux = a;
-    soma (aux, b);
-}
-void soma (int aux, int  b)
-{
-    printf("%d ", aux);
-    aux += 1;
-    if (aux <= b)
-    {
-        soma (aux, b);
+int main(){
+    int quant, fabri = 0 , i , j, ctr = 0;
+    printf("quantos pedidos");
+    scanf("%i", &quant );
+    int tacos[quant];
+    for(int i = 0; i<quant; i++){
+        scanf("%i",tacos);
     }
+    for(int i = 0; i < quant; i++){
+
+        for(int j = 0; j < quant; j++){
+            if(tacos[i] == tacos[j] && i != j){
+                
+            }
+        }
+    }
+
+
 }
