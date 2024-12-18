@@ -665,6 +665,11 @@ void excluirCategoria(int cat)
     }
 }
 
+void Relatorios()
+{
+    
+}
+
 void salvarAmigo()
 {
     int i;
