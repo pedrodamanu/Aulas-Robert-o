@@ -67,21 +67,27 @@ void Relatorios();
 void adicionarAmigo();
 void adicionarLocal();
 void adicionarCategoria();
-void pesquisarAmigo(int OpFun);
-void pesquisarLocal(int OpFun);
-void pesquisarCategoria(int OpFun);
+void adicionarEncontro();
+int pesquisarAmigo(int OpFun);
+int pesquisarLocal(int OpFun);
+int pesquisarCategoria(int OpFun);
+void pesquisarEncontro(int opFun);
 void alterarAmigo(int amg);
 void alterarLocal(int loc);
 void alterarCategoria(int cat);
+void alterarEncontro(int enc);
 void excluirAmigo(int amg);
 void excluirLocal(int loc);
 void excluirCategoria(int cat);
+void excluirEncontro(int enc);
 void salvarAmigo();
 void salvarLocal();
 void salvarCategoria();
+void salvarEncontro();
 void recuperarAmigo();
 void recuperarLocal();
 void recuperarCategoria();
+void recuperarEncontro();
 int valide_data(int dias, int mes, int ano);
 int validarValor(int num, int param1, int param2);
 void liberarPonteiros();
@@ -89,10 +95,12 @@ void liberarPonteiros();
 TAmigo *amigos;
 TLocal *locais;
 TCategoria *categorias;
+TEncontro *encontros;
 
 int numAmigo = 0;
 int numLocal = 0;
 int numCategoria = 0;
+int numEncontro = 0;
 
 int main()
 {
@@ -131,18 +139,23 @@ void lerMenu()
         {
         case 1:
             manterAmigo();
+            system("cls");
             break;
         case 2:
             manterLocal();
+            system("cls");
             break;
         case 3:
             manterCategoria();
+            system("cls");
             break;
         case 4:
-            //manterEncontro();
+            manterEncontro();
+            system("cls");
             break;
         case 5:
             //Relatorios();
+            system("cls");
             break;
         }
     }
@@ -236,7 +249,7 @@ void adicionarAmigo()
     system("cls");
 }
 
-void pesquisarAmigo(int OpFun)
+int pesquisarAmigo(int OpFun)
 {
     int i, opAmigo;
     printf("Você deseja selecionar qual amigo?\n");
@@ -256,9 +269,13 @@ void pesquisarAmigo(int OpFun)
     {
         alterarAmigo(opAmigo - 1);
     }
-    else
+    else if(OpFun == 2)
     {
         excluirAmigo(opAmigo - 1);
+    }
+    else
+    {
+        return opAmigo - 1;
     }
 }
 
@@ -431,7 +448,7 @@ void adicionarLocal()
     system("cls");
 }
 
-void pesquisarLocal(int OpFun)
+int pesquisarLocal(int OpFun)
 {
     int i, opLocal;
     printf("Você deseja selecionar qual local?\n");
@@ -451,9 +468,13 @@ void pesquisarLocal(int OpFun)
     {
         alterarLocal(opLocal - 1);
     }
-    else
+    else if(OpFun == 2)
     {
         excluirLocal(opLocal - 1);
+    }
+    else
+    {
+        return opLocal - 1;
     }
 }
 
@@ -603,7 +624,7 @@ void adicionarCategoria()
     system("cls");
 }
 
-void pesquisarCategoria(int OpFun)
+int pesquisarCategoria(int OpFun)
 {
     int i, opCategoria;
     printf("Você deseja selecionar qual categoria?\n");
@@ -623,9 +644,13 @@ void pesquisarCategoria(int OpFun)
     {
         alterarCategoria(opCategoria - 1);
     }
-    else
+    else if(OpFun == 2)
     {
         excluirCategoria(opCategoria - 1);
+    }
+    else
+    {
+        return opCategoria - 1;
     }
 }
 
@@ -663,6 +688,138 @@ void excluirCategoria(int cat)
         system("cls");
         return;
     }
+}
+
+void manterEncontro()
+{
+    int opEncontro = 1;
+    while(opEncontro != 0)
+    {
+        printf("1) Adicionar encontro\n");
+        printf("2) Alterar encontro\n");
+        printf("3) Excluir encontro\n");
+        printf("0) Voltar\n");
+        scanf("%d", &opEncontro);
+
+        if(validarValor(opEncontro, 0, 3) == 0)
+        {
+            manterEncontro();
+        }
+
+        switch(opEncontro)
+        {
+            case 1:
+                adicionarEncontro();
+                system("cls");
+                break;
+            case 2:
+                //pesquisarEncontro(1);
+                system("cls");
+                break;
+            case 3:
+                //pesquisarEncontro(2);
+                system("cls");
+                break;
+        }
+    }
+}
+
+void adicionarEncontro()
+{
+    int aux, cont = 0, op = 0, auxDat = 0;
+    char strAux[200];
+
+    if(numEncontro == 0)
+    {
+        encontros = (TEncontro*)malloc(1 * sizeof(TEncontro));
+    }
+    else
+    {
+        encontros = (TEncontro*)realloc(encontros, (numEncontro + 1) * sizeof(TEncontro));
+    }
+
+    printf("Preencha os dados do encontro:\n");
+
+    encontros[numEncontro].amigos = (TAmigo*)malloc(1 * sizeof(TAmigo));
+    aux = pesquisarAmigo(0);
+    encontros[numEncontro].amigos[cont] = amigos[aux];
+    while (1)
+    {
+        printf("Deseja selecionar mais um amigo?\n");
+        printf("1) Sim\n");
+        printf("2) Não\n");
+        scanf("%d", &op);
+        if (op == 1)
+        {
+            cont++;
+            encontros[numEncontro].amigos = (TAmigo*)realloc(encontros[numEncontro].amigos, (cont + 1) * sizeof(TAmigo));
+            aux = pesquisarAmigo(0);
+            encontros[numEncontro].amigos[cont] = amigos[aux];
+        }
+        else if (op == 2)
+        {
+            cont = 0;
+            break;
+        }
+        else
+        {
+            printf("Valor invalido!\n");
+        }
+    }
+
+    encontros[numEncontro].categoria = (TCategoria*)malloc(1 * sizeof(TCategoria));
+    aux = pesquisarCategoria(0);
+    encontros[numEncontro].categoria[cont] = categorias[aux];
+    while (1)
+    {
+        printf("Deseja selecionar mais uma categoria?\n");
+        printf("1) Sim\n");
+        printf("2) Não\n");
+        scanf("%d", &op);
+        if (op == 1)
+        {
+            cont++;
+            encontros[numEncontro].categoria = (TCategoria*)realloc(encontros[numEncontro].categoria, (cont + 1) * sizeof(TCategoria));
+            aux = pesquisarCategoria(0);
+            encontros[numEncontro].categoria[cont] = categorias[aux];
+        }
+        else if (op == 2)
+        {
+            cont = 0;
+            break;
+        }
+        else
+        {
+            printf("Valor invalido!\n");
+        }
+    }
+
+    aux = pesquisarLocal(0);
+    encontros[numEncontro].local = locais[aux];
+
+    printf("Qual o horário?(Sem sinal entre hora e minutos)");
+    scanf("%d%d", &encontros[numEncontro].horario.hora, &encontros[numEncontro].horario.minuto);
+
+    while(auxDat == 0)
+    {
+        printf("Qual a data do encontro? (DD MM AAAA, sem barras)\n");
+        scanf("%d%d%d", &encontros[numEncontro].data.dia, &encontros[numEncontro].data.mes, &encontros[numEncontro].data.ano);
+        auxDat = valide_data(encontros[numEncontro].data.dia, encontros[numEncontro].data.mes, encontros[numEncontro].data.ano);
+        if (auxDat == 0)
+        {
+            printf("Valor invalido!\n");
+        }
+    }
+
+    printf("O que acontecera no encontro?\n");
+    fflush(stdin);
+    gets(strAux);
+    fflush(stdin);
+    encontros[numEncontro].desc = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+    strcpy(encontros[numEncontro].desc, strAux);
+
+    numEncontro++;
+    system("cls");
 }
 
 void Relatorios()
@@ -945,8 +1102,13 @@ void liberarPonteiros()
         free(locais[i].endereco.cidade);
         free(locais[i].endereco.estado);
     }
+    for (i = 0; i < numCategoria; i++)
+    {
+        free(categorias[i].nome);
+    }
     free(amigos);
     free(locais);
+    free(categorias);
 }
 
 int validarValor(int num, int param1, int param2)
