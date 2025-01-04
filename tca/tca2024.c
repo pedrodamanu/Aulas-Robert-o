@@ -51,11 +51,15 @@ typedef struct
 typedef struct
 {
     TAmigo *amigos;
+    int numAmigoEnc;
     TCategoria *categoria;
+    int numCategoriaEnc;
     TData data;
     THora horario;
     TLocal local;
     char *desc;
+    int *indiceAmigo;
+    int *indiceCategoria;
 } TEncontro;
 
 void lerMenu();
@@ -112,6 +116,7 @@ int main()
     salvarAmigo();
     salvarLocal();
     salvarCategoria();
+    salvarEncontro();
     liberarPonteiros();
 }
 
@@ -726,7 +731,7 @@ void manterEncontro()
 
 void adicionarEncontro()
 {
-    int aux, cont = 0, op = 0, auxDat = 0;
+    int aux, cont = 0, op = 0, auxDat = 0, auxIndice = 0;
     char strAux[200];
 
     if(numEncontro == 0)
@@ -738,10 +743,15 @@ void adicionarEncontro()
         encontros = (TEncontro*)realloc(encontros, (numEncontro + 1) * sizeof(TEncontro));
     }
 
+    encontros[numEncontro].numAmigoEnc = 1;
+    encontros[numEncontro].numCategoriaEnc = 1;
+
     printf("Preencha os dados do encontro:\n");
 
-    encontros[numEncontro].amigos = (TAmigo*)malloc(1 * sizeof(TAmigo));
+    encontros[numEncontro].amigos = (TAmigo *)malloc(1 * sizeof(TAmigo));
+    encontros[numEncontro].indiceAmigo = (int *)malloc(1 * sizeof(int));
     aux = pesquisarAmigo(0);
+    encontros[numEncontro].indiceAmigo[auxIndice++] = aux;
     encontros[numEncontro].amigos[cont] = amigos[aux];
     while (1)
     {
@@ -753,8 +763,11 @@ void adicionarEncontro()
         {
             cont++;
             encontros[numEncontro].amigos = (TAmigo*)realloc(encontros[numEncontro].amigos, (cont + 1) * sizeof(TAmigo));
+            encontros[numEncontro].indiceAmigo = (int *)realloc(encontros[numEncontro].indiceAmigo, (auxIndice + 1) * sizeof(int));
             aux = pesquisarAmigo(0);
+            encontros[numEncontro].indiceAmigo[auxIndice++] = aux;
             encontros[numEncontro].amigos[cont] = amigos[aux];
+            encontros[numEncontro].numAmigoEnc++;
         }
         else if (op == 2)
         {
@@ -767,8 +780,11 @@ void adicionarEncontro()
         }
     }
 
+    auxIndice = 0;
     encontros[numEncontro].categoria = (TCategoria*)malloc(1 * sizeof(TCategoria));
+    encontros[numEncontro].indiceCategoria = (int *)malloc(1 * sizeof(int));
     aux = pesquisarCategoria(0);
+    encontros[numEncontro].indiceCategoria[auxIndice++] = aux;
     encontros[numEncontro].categoria[cont] = categorias[aux];
     while (1)
     {
@@ -780,8 +796,11 @@ void adicionarEncontro()
         {
             cont++;
             encontros[numEncontro].categoria = (TCategoria*)realloc(encontros[numEncontro].categoria, (cont + 1) * sizeof(TCategoria));
+            encontros[numEncontro].indiceCategoria = (int *)realloc(encontros[numEncontro].indiceCategoria, (auxIndice + 1) * sizeof(int));
             aux = pesquisarCategoria(0);
+            encontros[numEncontro].indiceCategoria[auxIndice++] = aux;
             encontros[numEncontro].categoria[cont] = categorias[aux];
+            encontros[numEncontro].numCategoriaEnc++;
         }
         else if (op == 2)
         {
@@ -821,6 +840,7 @@ void adicionarEncontro()
     numEncontro++;
     system("cls");
 }
+
 
 void Relatorios()
 {
@@ -875,6 +895,36 @@ void salvarCategoria()
     for (i = 0; i < numCategoria; i++)
     {
         fprintf(pArq, "%s;", categorias[i].nome);
+        fprintf(pArq, "%c", '\n');
+    }
+    fclose(pArq);
+}
+
+void salvarEncontro()
+{
+    int i, j;
+    FILE *pArq;
+
+    pArq = fopen("encontrosBD.txt", "w");
+    for (i = 0; i < numEncontro; i++)
+    {
+        for (j = 0; j < encontros[i].numAmigoEnc; j++)
+        {
+            fprintf(pArq, "%d@", encontros[i].indiceAmigo[j]);
+        }
+        for (j = 0; j < encontros[i].numCategoriaEnc; j++)
+        {
+            fprintf(pArq, "%d#", encontros[i].indiceCategoria[j]);
+        }
+        fprintf(pArq, "%i;", encontros[i].numAmigoEnc);
+        fprintf(pArq, "%i;", encontros[i].numCategoriaEnc);
+        fprintf(pArq, "%i;", encontros[i].data.dia);
+        fprintf(pArq, "%i;", encontros[i].data.mes);
+        fprintf(pArq, "%i;", encontros[i].data.ano);
+        fprintf(pArq, "%i;", encontros[i].horario.hora);
+        fprintf(pArq, "%i;", encontros[i].horario.minuto);
+        fprintf(pArq, "%s;", encontros[i].local);
+        fprintf(pArq, "%s;", encontros[i].desc);
         fprintf(pArq, "%c", '\n');
     }
     fclose(pArq);
