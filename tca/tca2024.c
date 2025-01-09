@@ -57,9 +57,9 @@ typedef struct
     TData data;
     THora horario;
     TLocal local;
+    int indLoc;
     char *desc;
     int *indiceAmigo;
-    int *indiceCategoria;
 } TEncontro;
 
 void lerMenu();
@@ -112,6 +112,7 @@ int main()
     recuperarAmigo();
     recuperarLocal();
     recuperarCategoria();
+    recuperarEncontro();
     lerMenu();
     salvarAmigo();
     salvarLocal();
@@ -369,6 +370,109 @@ void excluirAmigo(int amg)
     }
 }
 
+void salvarAmigo()
+{
+    int i;
+    FILE *pArq;
+
+    pArq = fopen("amigosBD.txt", "w");
+    for (i = 0; i < numAmigo; i++)
+    {
+        fprintf(pArq, "%s;", amigos[i].nome);
+        fprintf(pArq, "%s;", amigos[i].apelido);
+        fprintf(pArq, "%s;", amigos[i].email);
+        fprintf(pArq, "%d;", amigos[i].data_nas.dia);
+        fprintf(pArq, "%d;", amigos[i].data_nas.mes);
+        fprintf(pArq, "%d;", amigos[i].data_nas.ano);
+        fprintf(pArq, "%s;", amigos[i].telefone);
+        fprintf(pArq, "%c", '\n');
+    }
+    fclose(pArq);
+}
+
+void recuperarAmigo()
+{
+    int i = 0, sep = 0;
+    char c, str[100];
+    FILE *pArq;
+
+    pArq = fopen("amigosBD.txt", "r");
+    if (pArq)
+    {
+        while (!feof(pArq))
+        {
+            c = fgetc(pArq);
+
+            if (c != ';' && c != '\n' && c != EOF)
+            {
+                str[i++] = c;
+            }
+            else if (c == ';' || c == '\n')
+            {
+                str[i] = '\0';
+                i = 0;
+                if (c == ';')
+                {
+                    if (sep == 0)
+                    {
+                        if (numAmigo == 0)
+                        {
+                            amigos = (TAmigo *)malloc(1 * sizeof(TAmigo));
+                        }
+                        else
+                        {
+                            amigos = (TAmigo *)realloc(amigos, (numAmigo + 1) * sizeof(TAmigo));
+                        }
+                        amigos[numAmigo].nome = (char *)malloc((strlen(str) + 1) * sizeof(char));
+                        strcpy(amigos[numAmigo].nome, str);
+                        sep++;
+                    }
+                    else if (sep == 1)
+                    {
+                        amigos[numAmigo].apelido = (char *)malloc((strlen(str) + 1) * sizeof(char));
+                        strcpy(amigos[numAmigo].apelido, str);
+                        sep++;
+                    }
+                    else if (sep == 2)
+                    {
+                        amigos[numAmigo].email = (char *)malloc((strlen(str) + 1) * sizeof(char));
+                        strcpy(amigos[numAmigo].email, str);
+                        sep++;
+                    }
+                    else if (sep == 3)
+                    {
+                        amigos[numAmigo].data_nas.dia = atoi(str);
+                        sep++;
+                    }
+                    else if (sep == 4)
+                    {
+                        amigos[numAmigo].data_nas.mes = atoi(str);
+                        sep++;
+                    }
+                    else if (sep == 5)
+                    {
+                        amigos[numAmigo].data_nas.ano = atoi(str);
+                        sep++;
+                    }
+                    else if (sep == 6)
+                    {
+                        amigos[numAmigo].telefone = (char *)malloc((strlen(str) + 1) * sizeof(char));
+                        strcpy(amigos[numAmigo].telefone, str);
+                        sep++;
+                    }
+                }
+                else
+                {
+                    numAmigo++;
+                    sep = 0;
+                }
+            }
+        }
+    }
+    fclose(pArq);
+}
+
+
 void manterLocal()
 {
     int opLocal = 1;
@@ -575,6 +679,103 @@ void excluirLocal(int loc)
     }
 }
 
+void salvarLocal()
+{
+    int i;
+    FILE *pArq;
+
+    pArq = fopen("locaisBD.txt", "w");
+    for (i = 0; i < numLocal; i++)
+    {
+        fprintf(pArq, "%s;", locais[i].nome_encontro);
+        fprintf(pArq, "%s;", locais[i].endereco.logradouro);
+        fprintf(pArq, "%i;", locais[i].endereco.numero);
+        fprintf(pArq, "%s;", locais[i].endereco.bairro);
+        fprintf(pArq, "%s;", locais[i].endereco.cidade);
+        fprintf(pArq, "%s;", locais[i].endereco.estado);
+        fprintf(pArq, "%c", '\n');
+    }
+    fclose(pArq);
+}
+
+void recuperarLocal()
+{
+    int i = 0, sep = 0;
+    char c, str[100];
+    FILE *pArq;
+
+    pArq = fopen("locaisBD.txt", "r");
+    if (pArq)
+    {
+        while (!feof(pArq))
+        {
+            c = fgetc(pArq);
+
+            if (c != ';' && c != '\n' && c != EOF)
+            {
+                str[i++] = c;
+            }
+            else if (c == ';' || c == '\n')
+            {
+                str[i] = '\0';
+                i = 0;
+                if (c == ';')
+                {
+                    if (sep == 0)
+                    {
+                        if (numLocal == 0)
+                        {
+                            locais = (TLocal *)malloc(1 * sizeof(TLocal));
+                        }
+                        else
+                        {
+                            locais = (TLocal *)realloc(locais, (numLocal + 1) * sizeof(TLocal));
+                        }
+                        locais[numLocal].nome_encontro = (char *)malloc((strlen(str) + 1) * sizeof(char));
+                        strcpy(locais[numLocal].nome_encontro, str);
+                        sep++;
+                    }
+                    else if (sep == 1)
+                    {
+                        locais[numLocal].endereco.logradouro = (char *)malloc((strlen(str) + 1) * sizeof(char));
+                        strcpy(locais[numLocal].endereco.logradouro, str);
+                        sep++;
+                    }
+                    else if (sep == 2)
+                    {
+                        locais[numLocal].endereco.numero = atoi(str);
+                        sep++;
+                    }
+                    else if (sep == 3)
+                    {
+                        locais[numLocal].endereco.bairro = (char *)malloc((strlen(str) + 1) * sizeof(char));
+                        strcpy(locais[numLocal].endereco.bairro, str);
+                        sep++;
+                    }
+                    else if (sep == 4)
+                    {
+                        locais[numLocal].endereco.cidade = (char *)malloc((strlen(str) + 1) * sizeof(char));
+                        strcpy(locais[numLocal].endereco.cidade, str);
+                        sep++;
+                    }
+                    else if (sep == 5)
+                    {
+                        locais[numLocal].endereco.estado = (char *)malloc((strlen(str) + 1) * sizeof(char));
+                        strcpy(locais[numLocal].endereco.estado, str);
+                        sep++;
+                    }
+                }
+                else
+                {
+                    numLocal++;
+                    sep = 0;
+                }
+            }
+        }
+    }
+    fclose(pArq);
+}
+
 void manterCategoria()
 {
     int opCategoria = 1;
@@ -695,6 +896,64 @@ void excluirCategoria(int cat)
     }
 }
 
+void salvarCategoria()
+{
+    int i;
+    FILE *pArq;
+
+    pArq = fopen("categoriasBD.txt", "w");
+    for (i = 0; i < numCategoria; i++)
+    {
+        fprintf(pArq, "%s;", categorias[i].nome);
+        fprintf(pArq, "%c", '\n');
+    }
+    fclose(pArq);
+}
+
+void recuperarCategoria()
+{
+    int i = 0;
+    char c, str[100];
+    FILE *pArq;
+
+    pArq = fopen("categoriasBD.txt", "r");
+    if (pArq)
+    {
+        while (!feof(pArq))
+        {
+            c = fgetc(pArq);
+
+            if (c != ';' && c != '\n' && c != EOF)
+            {
+                str[i++] = c;
+            }
+            else if (c == ';' || c == '\n')
+            {
+                str[i] = '\0';
+                i = 0;
+                if (c == ';')
+                {
+                    if (numCategoria == 0)
+                    {
+                        categorias = (TCategoria *)malloc(1 * sizeof(TCategoria));
+                    }
+                    else
+                    {
+                        categorias = (TCategoria *)realloc(categorias, (numCategoria + 1) * sizeof(TCategoria));
+                    }
+                    categorias[numCategoria].nome = (char *)malloc((strlen(str) + 1) * sizeof(char));
+                    strcpy(categorias[numCategoria].nome, str);
+                }
+                else
+                {
+                    numCategoria++;
+                }
+            }
+        }
+    }
+    fclose(pArq);
+}
+
 void manterEncontro()
 {
     int opEncontro = 1;
@@ -782,9 +1041,7 @@ void adicionarEncontro()
 
     auxIndice = 0;
     encontros[numEncontro].categoria = (TCategoria*)malloc(1 * sizeof(TCategoria));
-    encontros[numEncontro].indiceCategoria = (int *)malloc(1 * sizeof(int));
     aux = pesquisarCategoria(0);
-    encontros[numEncontro].indiceCategoria[auxIndice++] = aux;
     encontros[numEncontro].categoria[cont] = categorias[aux];
     while (1)
     {
@@ -796,9 +1053,7 @@ void adicionarEncontro()
         {
             cont++;
             encontros[numEncontro].categoria = (TCategoria*)realloc(encontros[numEncontro].categoria, (cont + 1) * sizeof(TCategoria));
-            encontros[numEncontro].indiceCategoria = (int *)realloc(encontros[numEncontro].indiceCategoria, (auxIndice + 1) * sizeof(int));
             aux = pesquisarCategoria(0);
-            encontros[numEncontro].indiceCategoria[auxIndice++] = aux;
             encontros[numEncontro].categoria[cont] = categorias[aux];
             encontros[numEncontro].numCategoriaEnc++;
         }
@@ -815,6 +1070,7 @@ void adicionarEncontro()
 
     aux = pesquisarLocal(0);
     encontros[numEncontro].local = locais[aux];
+    encontros[numEncontro].indLoc = aux;
 
     printf("Qual o horário?(Sem sinal entre hora e minutos)");
     scanf("%d%d", &encontros[numEncontro].horario.hora, &encontros[numEncontro].horario.minuto);
@@ -841,65 +1097,6 @@ void adicionarEncontro()
     system("cls");
 }
 
-
-void Relatorios()
-{
-    
-}
-
-void salvarAmigo()
-{
-    int i;
-    FILE *pArq;
-
-    pArq = fopen("amigosBD.txt", "w");
-    for (i = 0; i < numAmigo; i++)
-    {
-        fprintf(pArq, "%s;", amigos[i].nome);
-        fprintf(pArq, "%s;", amigos[i].apelido);
-        fprintf(pArq, "%s;", amigos[i].email);
-        fprintf(pArq, "%d;", amigos[i].data_nas.dia);
-        fprintf(pArq, "%d;", amigos[i].data_nas.mes);
-        fprintf(pArq, "%d;", amigos[i].data_nas.ano);
-        fprintf(pArq, "%s;", amigos[i].telefone);
-        fprintf(pArq, "%c", '\n');
-    }
-    fclose(pArq);
-}
-
-void salvarLocal()
-{
-    int i;
-    FILE *pArq;
-
-    pArq = fopen("locaisBD.txt", "w");
-    for (i = 0; i < numLocal; i++)
-    {
-        fprintf(pArq, "%s;", locais[i].nome_encontro);
-        fprintf(pArq, "%s;", locais[i].endereco.logradouro);
-        fprintf(pArq, "%i;", locais[i].endereco.numero);
-        fprintf(pArq, "%s;", locais[i].endereco.bairro);
-        fprintf(pArq, "%s;", locais[i].endereco.cidade);
-        fprintf(pArq, "%s;", locais[i].endereco.estado);
-        fprintf(pArq, "%c", '\n');
-    }
-    fclose(pArq);
-}
-
-void salvarCategoria()
-{
-    int i;
-    FILE *pArq;
-
-    pArq = fopen("categoriasBD.txt", "w");
-    for (i = 0; i < numCategoria; i++)
-    {
-        fprintf(pArq, "%s;", categorias[i].nome);
-        fprintf(pArq, "%c", '\n');
-    }
-    fclose(pArq);
-}
-
 void salvarEncontro()
 {
     int i, j;
@@ -908,14 +1105,6 @@ void salvarEncontro()
     pArq = fopen("encontrosBD.txt", "w");
     for (i = 0; i < numEncontro; i++)
     {
-        for (j = 0; j < encontros[i].numAmigoEnc; j++)
-        {
-            fprintf(pArq, "%d@", encontros[i].indiceAmigo[j]);
-        }
-        for (j = 0; j < encontros[i].numCategoriaEnc; j++)
-        {
-            fprintf(pArq, "%d#", encontros[i].indiceCategoria[j]);
-        }
         fprintf(pArq, "%i;", encontros[i].numAmigoEnc);
         fprintf(pArq, "%i;", encontros[i].numCategoriaEnc);
         fprintf(pArq, "%i;", encontros[i].data.dia);
@@ -923,165 +1112,138 @@ void salvarEncontro()
         fprintf(pArq, "%i;", encontros[i].data.ano);
         fprintf(pArq, "%i;", encontros[i].horario.hora);
         fprintf(pArq, "%i;", encontros[i].horario.minuto);
-        fprintf(pArq, "%s;", encontros[i].local);
+        fprintf(pArq, "%d;", encontros[i].indLoc);
         fprintf(pArq, "%s;", encontros[i].desc);
+        for (j = 0; j < encontros[i].numAmigoEnc; j++)
+        {
+            fprintf(pArq, "%d@", encontros[i].indiceAmigo[j]);
+        }
+        for (j = 0; j < encontros[i].numCategoriaEnc; j++)
+        {
+            fprintf(pArq, "%s#", encontros[i].categoria[j]);
+        }
         fprintf(pArq, "%c", '\n');
     }
     fclose(pArq);
 }
 
-void recuperarAmigo()
+void recuperarEncontro()
 {
-    int i = 0, sep = 0;
+    int i = 0, sep = 0, j = 0;
     char c, str[100];
     FILE *pArq;
 
-    pArq = fopen("amigosBD.txt", "r");
+    pArq = fopen("encontrosBD.txt", "r");
     if (pArq)
     {
         while (!feof(pArq))
         {
             c = fgetc(pArq);
 
-            if (c != ';' && c != '\n' && c != EOF)
+            if (c != ';' && c != '#' && c != '@' && c != '\n' && c != EOF)
             {
                 str[i++] = c;
             }
-            else if (c == ';' || c == '\n')
+            else if (c == '@' || c == '#' || c == ';' || c == '\n')
             {
                 str[i] = '\0';
                 i = 0;
+                
                 if (c == ';')
                 {
                     if (sep == 0)
                     {
-                        if (numAmigo == 0)
+                        if (numEncontro == 0)
                         {
-                            amigos = (TAmigo *)malloc(1 * sizeof(TAmigo));
+                            encontros = (TEncontro *)malloc(1 * sizeof(TEncontro));
                         }
                         else
                         {
-                            amigos = (TAmigo *)realloc(amigos, (numAmigo + 1) * sizeof(TAmigo));
+                            encontros = (TEncontro *)realloc(encontros, (numEncontro + 1) * sizeof(TEncontro));
                         }
-                        amigos[numAmigo].nome = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(amigos[numAmigo].nome, str);
+                        encontros[numEncontro].numAmigoEnc = atoi(str);
                         sep++;
                     }
                     else if (sep == 1)
                     {
-                        amigos[numAmigo].apelido = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(amigos[numAmigo].apelido, str);
+                        encontros[numEncontro].numCategoriaEnc = atoi(str);
                         sep++;
                     }
                     else if (sep == 2)
                     {
-                        amigos[numAmigo].email = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(amigos[numAmigo].email, str);
+                        encontros[numEncontro].data.dia = atoi(str);
                         sep++;
                     }
                     else if (sep == 3)
                     {
-                        amigos[numAmigo].data_nas.dia = atoi(str);
+                        encontros[numEncontro].data.mes = atoi(str);
                         sep++;
                     }
                     else if (sep == 4)
                     {
-                        amigos[numAmigo].data_nas.mes = atoi(str);
+                        encontros[numEncontro].data.ano = atoi(str);
                         sep++;
                     }
                     else if (sep == 5)
                     {
-                        amigos[numAmigo].data_nas.ano = atoi(str);
+                        encontros[numEncontro].horario.hora = atoi(str);
                         sep++;
                     }
                     else if (sep == 6)
                     {
-                        amigos[numAmigo].telefone = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(amigos[numAmigo].telefone, str);
+                        encontros[numEncontro].horario.minuto = atoi(str);
                         sep++;
                     }
+                    else if (sep == 7)
+                    {
+                        encontros[numEncontro].local = locais[atoi(str)];
+                        sep++;
+                    }
+                    else if (sep == 8)
+                    {
+                        encontros[numEncontro].desc = (char *)malloc((strlen(str) + 1) * sizeof(char));
+                        strcpy(encontros[numEncontro].desc, str);
+                        sep = 0;
+                    }
                 }
-                else
-                {
-                    numAmigo++;
-                    sep = 0;
-                }
-            }
-        }
-    }
-    fclose(pArq);
-}
-
-void recuperarLocal()
-{
-    int i = 0, sep = 0;
-    char c, str[100];
-    FILE *pArq;
-
-    pArq = fopen("locaisBD.txt", "r");
-    if (pArq)
-    {
-        while (!feof(pArq))
-        {
-            c = fgetc(pArq);
-
-            if (c != ';' && c != '\n' && c != EOF)
-            {
-                str[i++] = c;
-            }
-            else if (c == ';' || c == '\n')
-            {
-                str[i] = '\0';
-                i = 0;
-                if (c == ';')
+                else if (c == '@')
                 {
                     if (sep == 0)
                     {
-                        if (numLocal == 0)
-                        {
-                            locais = (TLocal *)malloc(1 * sizeof(TLocal));
-                        }
-                        else
-                        {
-                            locais = (TLocal *)realloc(locais, (numLocal + 1) * sizeof(TLocal));
-                        }
-                        locais[numLocal].nome_encontro = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(locais[numLocal].nome_encontro, str);
-                        sep++;
+                        encontros[numEncontro].amigos = (TAmigo *)malloc(1 * sizeof(TAmigo));
+                        encontros[numEncontro].amigos[j] = amigos[atoi(str)];
+                        j++;
                     }
-                    else if (sep == 1)
+                    else
                     {
-                        locais[numLocal].endereco.logradouro = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(locais[numLocal].endereco.logradouro, str);
-                        sep++;
+                        encontros[numEncontro].amigos = (TAmigo *)realloc(encontros[numEncontro].amigos, (j + 1) * sizeof(TAmigo));
+                        encontros[numEncontro].amigos[j] = amigos[atoi(str)];
+                        j++;
                     }
-                    else if (sep == 2)
+                    sep = -1;
+                }
+                else if (c == '#')
+                {
+                    if(sep == -1)
                     {
-                        locais[numLocal].endereco.numero = atoi(str);
-                        sep++;
+                        j = 0;
+                        encontros[numEncontro].categoria = (TCategoria *)malloc(1 * sizeof(TCategoria));
+                        encontros[numEncontro].categoria[j].nome = (char *)malloc((strlen(str) + 1) * sizeof(char));
+                        strcpy(encontros[numEncontro].categoria[j].nome, str);
+                        j++;
                     }
-                    else if (sep == 3)
+                    else
                     {
-                        locais[numLocal].endereco.bairro = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(locais[numLocal].endereco.bairro, str);
-                        sep++;
+                        encontros[numEncontro].categoria = (TCategoria *)realloc(encontros[numEncontro].categoria, (j + 1) * sizeof(TCategoria));
+                        encontros[numEncontro].categoria[j].nome = (char *)malloc((strlen(str) + 1) * sizeof(char));
+                        strcpy(encontros[numEncontro].categoria[j].nome, str);
+                        j++;
                     }
-                    else if (sep == 4)
-                    {
-                        locais[numLocal].endereco.cidade = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(locais[numLocal].endereco.cidade, str);
-                        sep++;
-                    }
-                    else if (sep == 5)
-                    {
-                        locais[numLocal].endereco.estado = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                        strcpy(locais[numLocal].endereco.estado, str);
-                        sep++;
-                    }
+                    sep = -2;
                 }
                 else
                 {
-                    numLocal++;
+                    numEncontro++;
                     sep = 0;
                 }
             }
@@ -1090,48 +1252,9 @@ void recuperarLocal()
     fclose(pArq);
 }
 
-void recuperarCategoria()
+void Relatorios()
 {
-    int i = 0;
-    char c, str[100];
-    FILE *pArq;
-
-    pArq = fopen("categoriasBD.txt", "r");
-    if (pArq)
-    {
-        while (!feof(pArq))
-        {
-            c = fgetc(pArq);
-
-            if (c != ';' && c != '\n' && c != EOF)
-            {
-                str[i++] = c;
-            }
-            else if (c == ';' || c == '\n')
-            {
-                str[i] = '\0';
-                i = 0;
-                if (c == ';')
-                {
-                    if (numCategoria == 0)
-                    {
-                        categorias = (TCategoria *)malloc(1 * sizeof(TCategoria));
-                    }
-                    else
-                    {
-                        categorias = (TCategoria *)realloc(categorias, (numCategoria + 1) * sizeof(TCategoria));
-                    }
-                    categorias[numCategoria].nome = (char *)malloc((strlen(str) + 1) * sizeof(char));
-                    strcpy(categorias[numCategoria].nome, str);
-                }
-                else
-                {
-                    numCategoria++;
-                }
-            }
-        }
-    }
-    fclose(pArq);
+    
 }
 
 void liberarPonteiros()
