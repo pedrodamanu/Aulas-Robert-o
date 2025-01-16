@@ -75,11 +75,13 @@ void adicionarEncontro();
 int pesquisarAmigo(int OpFun);
 int pesquisarLocal(int OpFun);
 int pesquisarCategoria(int OpFun);
-void pesquisarEncontro(int opFun);
+void pesquisarEncontro(int OpFun);
 void alterarAmigo(int amg);
 void alterarLocal(int loc);
 void alterarCategoria(int cat);
 void alterarEncontro(int enc);
+void alterarAmigoEnc(int enc);
+void alterarCategoriaEnc(int enc);
 void excluirAmigo(int amg);
 void excluirLocal(int loc);
 void excluirCategoria(int cat);
@@ -977,11 +979,11 @@ void manterEncontro()
                 system("cls");
                 break;
             case 2:
-                //pesquisarEncontro(1);
+                pesquisarEncontro(1);
                 system("cls");
                 break;
             case 3:
-                //pesquisarEncontro(2);
+                pesquisarEncontro(2);
                 system("cls");
                 break;
         }
@@ -1097,6 +1099,129 @@ void adicionarEncontro()
     system("cls");
 }
 
+void pesquisarEncontro(int OpFun)
+{
+    int i, opEncontro;
+    printf("Você deseja selecionar qual encontro?\n");
+    for (i = 0; i < numEncontro; i++)
+    {
+        printf("%d) ", i + 1);
+        puts(encontros[i].desc);
+    }
+    scanf("%d", &opEncontro);
+
+    if(validarValor(opEncontro, 1, numEncontro) == 0)
+    {
+        pesquisarEncontro(OpFun);
+    }
+
+    if (OpFun == 1)
+    {
+        alterarEncontro(opEncontro - 1);
+    }
+    else if(OpFun == 2)
+    {
+        excluirEncontro(opEncontro - 1);
+    }
+}
+
+void alterarEncontro(int enc)
+{
+    int opAlt, auxDat = 0, i, aux;
+    char strAux[100];
+    printf("Você deseja alterar:\n");
+
+    printf("1) Amigos (");
+    for (i = 0; i < encontros[enc].numAmigoEnc; i++)
+    {
+        printf("%s, ", encontros[enc].amigos[i].nome);
+    }
+    printf(")\n");
+
+    printf("1) Categorias (");
+    for (i = 0; i < encontros[enc].numCategoriaEnc; i++)
+    {
+        printf("%s, ", encontros[enc].categoria[i].nome);
+    }
+    printf(")\n");
+
+    printf("3) Local (%s)\n", encontros[enc].local.nome_encontro); 
+    printf("4) Horário (%d:%d)\n", encontros[enc].horario.hora, encontros[enc].horario.minuto);
+    printf("5) Data (%d/%d/%d)\n", encontros[enc].data.dia, encontros[enc].data.ano, encontros[enc].data.ano); 
+    printf("6) Descrição (%s)\n", encontros[enc].desc); 
+    scanf("%d", &opAlt);
+
+    if(validarValor(opAlt, 1, 6) == 0)
+    {
+        alterarEncontro(enc);
+    }
+
+    switch(opAlt)
+    {
+        case 1:
+            //alterarAmigoEnc(enc);
+            break;
+        case 2:
+            //alterarCategoriaEnc(enc);
+            break;
+        case 3:
+            printf("Qual o novo local?\n");
+            aux = pesquisarLocal(0);
+            encontros[enc].local = locais[aux];
+            encontros[enc].indLoc = aux;
+            break;
+        case 4:
+            printf("Qual o novo horário?(Sem sinal entre hora e minutos)");
+            scanf("%d%d", &encontros[enc].horario.hora, &encontros[enc].horario.minuto);
+            break;
+        case 5:
+            while(auxDat == 0)
+            {
+                printf("Qual a nova data do encontro? (DD MM AAAA, sem barras)\n");
+                scanf("%d%d%d", &encontros[enc].data.dia, &encontros[enc].data.mes, &encontros[enc].data.ano);
+                auxDat = valide_data(encontros[enc].data.dia, encontros[enc].data.mes, encontros[enc].data.ano);
+                if (auxDat == 0)
+                {
+                    printf("Valor invalido!\n");
+                }
+            }
+            break;
+        case 6:
+            printf("Qual a nova descrição?\n");
+            fflush(stdin);
+            gets(strAux);
+            fflush(stdin);
+            encontros[enc].desc = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+            strcpy(encontros[enc].desc, strAux);
+            break;
+    }
+    system("cls");
+}
+
+void excluirEncontro(int enc)
+{
+    int i, conf;
+    printf("Tem certeza que quer excluir o encontro?\n");
+    printf("1) Sim\n2) Não\n");
+    
+    scanf("%d", &conf);
+    if (conf == 1)
+    {
+        for(i = enc; i < numEncontro - 1; i++)
+        {
+            encontros[i] = encontros[i + 1];
+        }
+        numEncontro--;
+        encontros = (TEncontro *)realloc(encontros, numEncontro * sizeof(TEncontro));
+        system("cls");
+    }
+    else
+    {
+        system("cls");
+        return;
+    }
+}
+
 void salvarEncontro()
 {
     int i, j;
@@ -1196,7 +1321,8 @@ void recuperarEncontro()
                     }
                     else if (sep == 7)
                     {
-                        encontros[numEncontro].local = locais[atoi(str)];
+                        encontros[numEncontro].indLoc = atoi(str);
+                        encontros[numEncontro].local = locais[encontros[numEncontro].indLoc];
                         sep++;
                     }
                     else if (sep == 8)
@@ -1211,13 +1337,17 @@ void recuperarEncontro()
                     if (sep == 0)
                     {
                         encontros[numEncontro].amigos = (TAmigo *)malloc(1 * sizeof(TAmigo));
-                        encontros[numEncontro].amigos[j] = amigos[atoi(str)];
+                        encontros[numEncontro].indiceAmigo = (int *)malloc(1 * sizeof(int));
+                        encontros[numEncontro].indiceAmigo[j] = atoi(str);
+                        encontros[numEncontro].amigos[j] = amigos[encontros[numEncontro].indiceAmigo[j]];
                         j++;
                     }
                     else
                     {
                         encontros[numEncontro].amigos = (TAmigo *)realloc(encontros[numEncontro].amigos, (j + 1) * sizeof(TAmigo));
-                        encontros[numEncontro].amigos[j] = amigos[atoi(str)];
+                        encontros[numEncontro].indiceAmigo = (int *)realloc(encontros[numEncontro].indiceAmigo, (j + 1) * sizeof(int));
+                        encontros[numEncontro].indiceAmigo[j] = atoi(str);
+                        encontros[numEncontro].amigos[j] = amigos[encontros[numEncontro].indiceAmigo[j]];
                         j++;
                     }
                     sep = -1;
@@ -1279,9 +1409,18 @@ void liberarPonteiros()
     {
         free(categorias[i].nome);
     }
+    for (i = 0; i < numEncontro; i++)
+    {
+        free(encontros[i].amigos);
+        free(encontros[i].categoria);
+        free(encontros[i].desc);
+        free(encontros[i].indiceAmigo);
+
+    }
     free(amigos);
     free(locais);
     free(categorias);
+    free(encontros);
 }
 
 int validarValor(int num, int param1, int param2)
