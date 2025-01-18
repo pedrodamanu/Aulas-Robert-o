@@ -1,2 +1,2 @@
-2;2;29;10;2000;2;10;1;Ida ao cinema e lanche;1@0@Cinema#Jantar#
-1;1;30;10;2006;19;20;0;Janta;0@Jantar#
+2;2;29;10;2000;2;10;1;sla;1@0@Cinema#Jantar#
+2;1;30;10;2006;19;20;0;Janta;0@1@Jantar#

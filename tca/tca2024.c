@@ -295,7 +295,7 @@ void alterarAmigo(int amg)
     printf("1) Nome (%s)\n", amigos[amg].nome);
     printf("2) Apelido (%s)\n", amigos[amg].apelido);
     printf("3) Email (%s)\n", amigos[amg].email); 
-    printf("4) Alterar data (%d/%d/%d)\n", &amigos[amg].data_nas.dia, &amigos[amg].data_nas.mes, &amigos[amg].data_nas.ano);
+    printf("4) Alterar data (%d/%d/%d)\n", amigos[amg].data_nas.dia, amigos[amg].data_nas.mes, amigos[amg].data_nas.ano);
     printf("5) Telefone (%s)\n", amigos[amg].telefone); 
     scanf("%d", &opAlt);
     switch(opAlt)
@@ -1159,7 +1159,7 @@ void alterarEncontro(int enc)
     switch(opAlt)
     {
         case 1:
-            //alterarAmigoEnc(enc);
+            alterarAmigoEnc(enc);
             break;
         case 2:
             //alterarCategoriaEnc(enc);
@@ -1196,6 +1196,26 @@ void alterarEncontro(int enc)
             break;
     }
     system("cls");
+}
+
+void alterarAmigoEnc(int enc)
+{
+    int i, op, aux;
+    printf("Você deseja: \n");
+    printf("1) Adicionar mais amigos\n");
+    printf("2) Excluir um amigo\n");
+    printf("0) Sair\n");
+    scanf("%d", &op);
+    switch(op)
+    {
+        case 1:
+            encontros[enc].amigos = (TAmigo*)realloc(encontros[enc].amigos, (encontros[enc].numAmigoEnc + 1) * sizeof(TAmigo));
+            encontros[enc].indiceAmigo = (int *)realloc(encontros[enc].indiceAmigo, (encontros[enc].numAmigoEnc + 1) * sizeof(int));
+            aux = pesquisarAmigo(0);
+            encontros[enc].indiceAmigo[encontros[enc].numAmigoEnc] = aux;
+            encontros[enc].amigos[encontros[enc].numAmigoEnc] = amigos[aux];
+            encontros[enc].numAmigoEnc++;
+    }
 }
 
 void excluirEncontro(int enc)
@@ -1245,7 +1265,7 @@ void salvarEncontro()
         }
         for (j = 0; j < encontros[i].numCategoriaEnc; j++)
         {
-            fprintf(pArq, "%s#", encontros[i].categoria[j]);
+            fprintf(pArq, "%s#", encontros[i].categoria[j].nome);
         }
         fprintf(pArq, "%c", '\n');
     }
