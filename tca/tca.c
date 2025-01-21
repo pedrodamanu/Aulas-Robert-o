@@ -1215,6 +1215,7 @@ void alterarAmigoEnc(int enc)
             encontros[enc].indiceAmigo[encontros[enc].numAmigoEnc] = aux;
             encontros[enc].amigos[encontros[enc].numAmigoEnc] = amigos[aux];
             encontros[enc].numAmigoEnc++;
+            break;
     }
 }
 
@@ -1395,6 +1396,7 @@ void recuperarEncontro()
                 {
                     numEncontro++;
                     sep = 0;
+                    j = 0;
                 }
             }
         }
