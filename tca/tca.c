@@ -146,24 +146,24 @@ void lerMenu()
         switch (op1)
         {
         case 1:
-            manterAmigo();
             system("cls");
+            manterAmigo();
             break;
         case 2:
-            manterLocal();
             system("cls");
+            manterLocal();
             break;
         case 3:
-            manterCategoria();
             system("cls");
+            manterCategoria();
             break;
         case 4:
-            manterEncontro();
             system("cls");
+            manterEncontro();
             break;
         case 5:
-            //Relatorios();
             system("cls");
+            //Relatorios();
             break;
         }
     }
@@ -975,16 +975,16 @@ void manterEncontro()
         switch(opEncontro)
         {
             case 1:
-                adicionarEncontro();
                 system("cls");
+                adicionarEncontro();
                 break;
             case 2:
-                pesquisarEncontro(1);
                 system("cls");
+                pesquisarEncontro(1);
                 break;
             case 3:
-                pesquisarEncontro(2);
                 system("cls");
+                pesquisarEncontro(2);
                 break;
         }
     }
@@ -1153,16 +1153,19 @@ void alterarEncontro(int enc)
 
     if(validarValor(opAlt, 1, 6) == 0)
     {
+        system("cls");
         alterarEncontro(enc);
     }
 
     switch(opAlt)
     {
         case 1:
+            system("cls");
             alterarAmigoEnc(enc);
             break;
         case 2:
-            //alterarCategoriaEnc(enc);
+            system("cls");
+            alterarCategoriaEnc(enc);
             break;
         case 3:
             printf("Qual o novo local?\n");
@@ -1200,12 +1203,13 @@ void alterarEncontro(int enc)
 
 void alterarAmigoEnc(int enc)
 {
-    int i, op, aux;
+    int i, op, aux, conf;
     printf("Você deseja: \n");
     printf("1) Adicionar mais amigos\n");
     printf("2) Excluir um amigo\n");
     printf("0) Sair\n");
     scanf("%d", &op);
+    system("cls");
     switch(op)
     {
         case 1:
@@ -1215,6 +1219,75 @@ void alterarAmigoEnc(int enc)
             encontros[enc].indiceAmigo[encontros[enc].numAmigoEnc] = aux;
             encontros[enc].amigos[encontros[enc].numAmigoEnc] = amigos[aux];
             encontros[enc].numAmigoEnc++;
+            system("cls");
+            break;
+        case 2:
+            aux = pesquisarAmigo(0);
+            printf("Tem certeza que quer excluir o amigo?\n");
+            printf("1) Sim\n2) Não\n");
+            scanf("%d", &conf);
+
+            if (conf == 1)
+            {
+                for(i = aux; i < encontros[enc].numAmigoEnc - 1; i++)
+                {
+                    encontros[enc].amigos[i] = encontros[enc].amigos[i + 1];
+                    encontros[enc].indiceAmigo[i] = encontros[enc].indiceAmigo[i + 1];
+                }
+                encontros[enc].numAmigoEnc--;
+                encontros[enc].amigos = (TAmigo *)realloc(encontros[enc].amigos, encontros[enc].numAmigoEnc * sizeof(TAmigo));
+                encontros[enc].indiceAmigo = (int *)realloc(encontros[enc].indiceAmigo, encontros[enc].numAmigoEnc * sizeof(int));
+                system("cls");
+            }
+            else
+            {
+                system("cls");
+                return;
+            }
+            break;
+        case 0:
+            system("cls");
+            return;
+    }
+}
+
+void alterarCategoriaEnc(int enc)
+{
+    int i, op, aux, conf;
+    printf("Você deseja: \n");
+    printf("1) Adicionar mais categorias\n");
+    printf("2) Excluir uma categoria\n");
+    printf("0) Sair\n");
+    scanf("%d", &op);
+    switch(op)
+    {
+        case 1:
+            encontros[enc].categoria = (TCategoria *)realloc(encontros[enc].categoria, (encontros[enc].numCategoriaEnc + 1) * sizeof(TCategoria));
+            aux = pesquisarCategoria(0);
+            encontros[enc].categoria[encontros[enc].numCategoriaEnc].nome = categorias[aux].nome;
+            encontros[enc].numCategoriaEnc++;
+            break;
+        case 2:
+            aux = pesquisarCategoria(0);
+            printf("Tem certeza que quer excluir a categoria?\n");
+            printf("1) Sim\n2) Não\n");
+            scanf("%d", &conf);
+
+            if (conf == 1)
+            {
+                for(i = aux; i < encontros[enc].numCategoriaEnc - 1; i++)
+                {
+                    encontros[enc].categoria[i] = encontros[enc].categoria[i + 1];
+                }
+                encontros[enc].numCategoriaEnc--;
+                encontros[enc].categoria = (TCategoria *)realloc(encontros[enc].categoria, encontros[enc].numCategoriaEnc * sizeof(TCategoria));
+                system("cls");
+            }
+            else
+            {
+                system("cls");
+                return;
+            }
             break;
     }
 }
