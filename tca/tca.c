@@ -68,6 +68,17 @@ void manterLocal();
 void manterCategoria();
 void manterEncontro();
 void Relatorios();
+void listarAmigos();
+void PrintaTodosAmigos();
+void PrintaUmAmigo(int amg);
+void listarLocais();
+void PrintaTodosLocais();
+void PrintaUmLocal(int loc);
+void listarCategorias();
+void listarEncontros();
+void PrintaTodosEncontros();
+void PrintaUmEncontro(int enc);
+void RelatorioPorCategoria();
 void adicionarAmigo();
 void adicionarLocal();
 void adicionarCategoria();
@@ -75,7 +86,7 @@ void adicionarEncontro();
 int pesquisarAmigo(int OpFun);
 int pesquisarLocal(int OpFun);
 int pesquisarCategoria(int OpFun);
-void pesquisarEncontro(int OpFun);
+int pesquisarEncontro(int OpFun);
 void alterarAmigo(int amg);
 void alterarLocal(int loc);
 void alterarCategoria(int cat);
@@ -163,7 +174,7 @@ void lerMenu()
             break;
         case 5:
             system("cls");
-            //Relatorios();
+            Relatorios();
             break;
         }
     }
@@ -1099,7 +1110,7 @@ void adicionarEncontro()
     system("cls");
 }
 
-void pesquisarEncontro(int OpFun)
+int pesquisarEncontro(int OpFun)
 {
     int i, opEncontro;
     printf("Você deseja selecionar qual encontro?\n");
@@ -1122,6 +1133,10 @@ void pesquisarEncontro(int OpFun)
     else if(OpFun == 2)
     {
         excluirEncontro(opEncontro - 1);
+    }
+    else
+    {
+        return opEncontro - 1;
     }
 }
 
@@ -1147,7 +1162,7 @@ void alterarEncontro(int enc)
 
     printf("3) Local (%s)\n", encontros[enc].local.nome_encontro); 
     printf("4) Horário (%d:%d)\n", encontros[enc].horario.hora, encontros[enc].horario.minuto);
-    printf("5) Data (%d/%d/%d)\n", encontros[enc].data.dia, encontros[enc].data.ano, encontros[enc].data.ano); 
+    printf("5) Data (%d/%d/%d)\n", encontros[enc].data.dia, encontros[enc].data.mes, encontros[enc].data.ano); 
     printf("6) Descrição (%s)\n", encontros[enc].desc); 
     scanf("%d", &opAlt);
 
@@ -1479,7 +1494,260 @@ void recuperarEncontro()
 
 void Relatorios()
 {
-    
+    int op;
+    printf("Qual opção você deseja?\n");
+    printf("1) Listar amigos\n");
+    printf("2) Listar locais\n");
+    printf("3) Listar categorias\n");
+    printf("4) Listar encontros\n");
+    printf("5) Relatório por categoria\n");
+    printf("0) Sair\n");
+    scanf("%d", &op);
+    switch(op)
+    {
+        case 1:
+            system("cls");
+            listarAmigos();
+            break;
+        case 2:
+            system("cls");
+            listarLocais();
+            break;
+        case 3:
+            system("cls");
+            listarCategorias();
+            break;
+        case 4:
+            system("cls");
+            listarEncontros();
+            break;
+        case 5:
+            system("cls");
+            //RelatorioPorCategoria();
+            break;
+        case 0:
+            system("cls");
+            return;
+        default:
+            printf("Valor invalido, tente novamente.\n");
+            system("pause");
+            system("cls");
+            Relatorios();
+            break;
+    }
+}
+
+void listarAmigos()
+{
+    int op, aux;
+    printf("Selecione a opção desejada:\n");
+    printf("1) Exibir os dados de todos os amigos\n");
+    printf("2) Exibir os dados de um amigo específico\n");
+    printf("0) Voltar\n");
+    scanf("%d", &op);
+    switch(op)
+    {
+        case 1:
+            system("cls");
+            PrintaTodosAmigos();
+            break;
+        case 2:
+            aux = pesquisarAmigo(0);
+            system("cls");
+            PrintaUmAmigo(aux);
+            break;
+        case 0:
+            system("cls");
+            Relatorios();
+            break;
+        default:
+            printf("Valor invalido, tente novamente\n");
+            system("pause");
+            system("cls");
+            listarAmigos();
+            break;
+    }
+}
+
+void PrintaTodosAmigos()
+{
+    int i;
+    for(i = 0; i < numAmigo; i++)
+    {
+        printf("Amigo %d:\n", i + 1);
+        printf("Nome: %s\n", amigos[i].nome);
+        printf("Apelido: %s\n", amigos[i].apelido);
+        printf("Data de nascimento: %d/%d/%d\n", amigos[i].data_nas.dia, amigos[i].data_nas.mes, amigos[i].data_nas.ano);
+        printf("Email: %s\n", amigos[i].email);
+        printf("Telefone: %s\n", amigos[i].telefone);
+        printf("\n");
+    }
+    system("pause");
+    system("cls");
+}
+
+void PrintaUmAmigo(int amg)
+{
+    printf("Nome: %s\n", amigos[amg].nome);
+    printf("Apelido: %s\n", amigos[amg].apelido);
+    printf("Data de nascimento: %d/%d/%d\n", amigos[amg].data_nas.dia, amigos[amg].data_nas.mes, amigos[amg].data_nas.ano);
+    printf("Email: %s\n", amigos[amg].email);
+    printf("Telefone: %s\n", amigos[amg].telefone);
+    printf("\n");
+    system("pause");
+    system("cls");
+}
+
+
+void listarLocais()
+{
+    int op, aux;
+    printf("Selecione a opção desejada:\n");
+    printf("1) Exibir os dados de todos os locais\n");
+    printf("2) Exibir os dados de um local específico\n");
+    printf("0) Voltar\n");
+    scanf("%d", &op);
+    switch(op)
+    {
+        case 1:
+            system("cls");
+            PrintaTodosLocais();
+            break;
+        case 2:
+            aux = pesquisarLocal(0);
+            system("cls");
+            PrintaUmLocal(aux);
+            break;
+        case 0:
+            system("cls");
+            Relatorios();
+            break;
+        default:
+            printf("Valor invalido, tente novamente\n");
+            system("pause");
+            system("cls");
+            listarLocais();
+            break;
+    }
+}
+
+void PrintaTodosLocais()
+{
+    int i;
+    for(i = 0; i < numLocal; i++)
+    {
+        printf("Local %d:\n", i + 1);
+        printf("Nome: %s\n", locais[i].nome_encontro);
+        printf("Logradouro: %s\n", locais[i].endereco.logradouro);
+        printf("Numero: %d\n", locais[i].endereco.numero);
+        printf("Bairro: %s\n", locais[i].endereco.bairro);
+        printf("Cidade: %s\n", locais[i].endereco.cidade);
+        printf("Estado: %s\n", locais[i].endereco.estado);
+        printf("\n");
+    }
+    system("pause");
+    system("cls");
+}
+
+void PrintaUmLocal(int loc)
+{
+    printf("Nome: %s\n", locais[loc].nome_encontro);
+    printf("Logradouro: %s\n", locais[loc].endereco.logradouro);
+    printf("Numero: %d\n", locais[loc].endereco.numero);
+    printf("Bairro: %s\n", locais[loc].endereco.bairro);
+    printf("Cidade: %s\n", locais[loc].endereco.cidade);
+    printf("Estado: %s\n", locais[loc].endereco.estado);
+    printf("\n");
+    system("pause");
+    system("cls");
+}
+
+void listarCategorias()
+{
+    int i;
+    for(i = 0; i < numCategoria; i++)
+    {
+        printf("Local %d: %s\n", i + 1, categorias[i].nome);
+        printf("\n");
+    }
+    system("pause");
+    system("cls");
+}
+
+void listarEncontros()
+{
+    int op, aux;
+    printf("Selecione a opção desejada:\n");
+    printf("1) Exibir os dados de todos os encontros\n");
+    printf("2) Exibir os dados de um encontro específico\n");
+    printf("0) Voltar\n");
+    scanf("%d", &op);
+    switch(op)
+    {
+        case 1:
+            system("cls");
+            PrintaTodosEncontros();
+            break;
+        case 2:
+            aux = pesquisarEncontro(0);
+            system("cls");
+            PrintaUmEncontro(aux);
+            break;
+        case 0:
+            system("cls");
+            Relatorios();
+            break;
+        default:
+            printf("Valor invalido, tente novamente\n");
+            system("pause");
+            system("cls");
+            listarEncontros();
+            break;
+    }
+}
+
+void PrintaTodosEncontros()
+{
+    int i, j;
+    for(i = 0; i < numEncontro; i++)
+    {
+        printf("Encontro %d:\n", i + 1);
+        for (j = 0; j < encontros[i].numAmigoEnc; j++)
+        {
+            printf("Amigo %d: %s\n", j + 1, encontros[i].amigos[j].nome);
+        }
+        for (j = 0; j < encontros[i].numCategoriaEnc; j++)
+        {
+            printf("Categoria %d: %s\n", j + 1, encontros[i].categoria[j].nome);
+        }
+        printf("Local: %s\n", encontros[i].local.nome_encontro);
+        printf("Data: %d/%d/%d\n", encontros[i].data.dia, encontros[i].data.mes, encontros[i].data.ano);
+        printf("Horario: %d:%d\n", encontros[i].horario.hora, encontros[i].horario.minuto);
+        printf("Descrição: %s\n", encontros[i].desc);
+        printf("\n");
+    }
+    system("pause");
+    system("cls");
+}
+
+void PrintaUmEncontro(int enc)
+{
+    int i;
+    for (i = 0; i < encontros[enc].numAmigoEnc; i++)
+    {
+        printf("Amigo %d: %s\n", i + 1, encontros[enc].amigos[i].nome);
+    }
+    for (i = 0; i < encontros[enc].numCategoriaEnc; i++)
+    {
+        printf("Categoria %d: %s\n", i + 1, encontros[enc].categoria[i].nome);
+    }
+    printf("Local: %s\n", encontros[enc].local.nome_encontro);
+    printf("Data: %d/%d/%d\n", encontros[enc].data.dia, encontros[enc].data.mes, encontros[enc].data.ano);
+    printf("Horario: %d:%d\n", encontros[enc].horario.hora, encontros[enc].horario.minuto);
+    printf("Descrição: %s\n", encontros[enc].desc);
+    printf("\n");
+    system("pause");
+    system("cls");
 }
 
 void liberarPonteiros()
