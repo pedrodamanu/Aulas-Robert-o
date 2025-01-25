@@ -1,3 +1,5 @@
 Jantar;
 Cinema;
 Passeio;
+Jogos;
+Viagem;

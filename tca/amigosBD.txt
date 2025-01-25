@@ -1,3 +1,4 @@
 Pedro;Pe;pedro@gmail;29;10;2008;9999 9999;
 Laura;Lau;lauraschneider@gmail;17;12;2009;8888 8888;
-aa;a;a;1;1;1;1;
+Guilherme;a;a;1;1;1;1;
+Claudia;Linda;clau@gmail.com;13;11;1982;9999 9999;

@@ -79,6 +79,7 @@ void listarEncontros();
 void PrintaTodosEncontros();
 void PrintaUmEncontro(int enc);
 void RelatorioPorCategoria();
+void PrintaEncontrosDaCategoria(int cat);
 void adicionarAmigo();
 void adicionarLocal();
 void adicionarCategoria();
@@ -107,6 +108,7 @@ void recuperarCategoria();
 void recuperarEncontro();
 int valide_data(int dias, int mes, int ano);
 int validarValor(int num, int param1, int param2);
+int validarHora(int hora, int minuto);
 void liberarPonteiros();
 
 TAmigo *amigos;
@@ -149,11 +151,6 @@ void lerMenu()
         printf("0) Sair\n");
         scanf("%d", &op1);
 
-        if(validarValor(op1, 0, 5) == 0)
-        {
-            lerMenu();
-        }
-
         switch (op1)
         {
         case 1:
@@ -176,6 +173,14 @@ void lerMenu()
             system("cls");
             Relatorios();
             break;
+        case 0:
+            system("cls");
+            return;
+        default:
+            system("cls");
+            printf("Valor invalido, tente novamente!\n");
+            lerMenu();
+            return;
         }
     }
     system("cls");
@@ -192,11 +197,6 @@ void manterAmigo()
         printf("0) Voltar\n");
         scanf("%d", &opAmigo);
 
-        if(validarValor(opAmigo, 0, 3) == 0)
-        {
-            manterAmigo();
-        }
-
         switch(opAmigo)
         {
             case 1:
@@ -208,6 +208,14 @@ void manterAmigo()
             case 3:
                 pesquisarAmigo(2);
                 break;
+            case 0:
+                system("cls");
+                return;
+            default:
+                system("cls");
+                printf("Valor invalido, tente novamente!\n");
+                manterAmigo();
+                return;
         }
     }
 }
@@ -282,6 +290,7 @@ int pesquisarAmigo(int OpFun)
     if(validarValor(opAmigo, 1, numAmigo) == 0)
     {
         pesquisarAmigo(OpFun);
+        //return 0;
     }
 
     if (OpFun == 1)
@@ -1003,7 +1012,7 @@ void manterEncontro()
 
 void adicionarEncontro()
 {
-    int aux, cont = 0, op = 0, auxDat = 0, auxIndice = 0;
+    int aux, cont = 0, op = 0, auxDat = 0, auxHora = 0, auxIndice = 0;
     char strAux[200];
 
     if(numEncontro == 0)
@@ -1085,8 +1094,16 @@ void adicionarEncontro()
     encontros[numEncontro].local = locais[aux];
     encontros[numEncontro].indLoc = aux;
 
-    printf("Qual o horário?(Sem sinal entre hora e minutos)");
-    scanf("%d%d", &encontros[numEncontro].horario.hora, &encontros[numEncontro].horario.minuto);
+    while(auxHora == 0)
+    {
+        printf("Qual o horário?(Sem sinal entre hora e minutos)");
+        scanf("%d%d", &encontros[numEncontro].horario.hora, &encontros[numEncontro].horario.minuto);
+        auxHora = validarHora(encontros[numEncontro].horario.hora, encontros[numEncontro].horario.minuto);
+        if (auxHora == 0)
+        {
+            printf("Horario invalido\n");
+        }
+    }
 
     while(auxDat == 0)
     {
@@ -1142,7 +1159,7 @@ int pesquisarEncontro(int OpFun)
 
 void alterarEncontro(int enc)
 {
-    int opAlt, auxDat = 0, i, aux;
+    int opAlt, auxDat = 0, auxHora = 0, i, aux;
     char strAux[100];
     printf("Você deseja alterar:\n");
 
@@ -1189,8 +1206,16 @@ void alterarEncontro(int enc)
             encontros[enc].indLoc = aux;
             break;
         case 4:
-            printf("Qual o novo horário?(Sem sinal entre hora e minutos)");
-            scanf("%d%d", &encontros[enc].horario.hora, &encontros[enc].horario.minuto);
+            while(auxHora == 0)
+            {
+                printf("Qual o horário?(Sem sinal entre hora e minutos)");
+                scanf("%d%d", &encontros[enc].horario.hora, &encontros[enc].horario.minuto);
+                auxHora = validarHora(encontros[enc].horario.hora, encontros[enc].horario.minuto);
+                if (auxHora == 0)
+                {
+                    printf("Horario invalido\n");
+                }
+            }
             break;
         case 5:
             while(auxDat == 0)
@@ -1523,7 +1548,7 @@ void Relatorios()
             break;
         case 5:
             system("cls");
-            //RelatorioPorCategoria();
+            RelatorioPorCategoria();
             break;
         case 0:
             system("cls");
@@ -1667,7 +1692,7 @@ void listarCategorias()
     int i;
     for(i = 0; i < numCategoria; i++)
     {
-        printf("Local %d: %s\n", i + 1, categorias[i].nome);
+        printf("Categoria %d: %s\n", i + 1, categorias[i].nome);
         printf("\n");
     }
     system("pause");
@@ -1750,6 +1775,75 @@ void PrintaUmEncontro(int enc)
     system("cls");
 }
 
+void RelatorioPorCategoria()
+{
+    int i, j, k, cont = 0, op;
+    for (i = 0; i < numCategoria; i++)
+    {
+        printf("%d) %s ", i + 1, categorias[i].nome);
+        for (j = 0; j < numEncontro; j++)
+        {
+            for (k = 0; k < encontros[j].numCategoriaEnc; k++)
+            {
+                if(strcmp(categorias[i].nome, encontros[j].categoria[k].nome) == 0)
+                {
+                    cont++;
+                }
+            }
+        }
+        printf("[%d encontros]\n", cont);
+        cont = 0;
+    }
+
+    printf("Se desejar ver quais os encontros em que cada categoria está digite o número da categoria. Caso contrário, digite 0 (zero)\n");
+    scanf("%d", &op);
+    if(validarValor(op, 1, numCategoria) == 0)
+    {
+        RelatorioPorCategoria();
+    }
+
+    if(op == 0)
+    {
+        system("cls");
+        return;
+    }
+    else
+    {
+        system("cls");
+        PrintaEncontrosDaCategoria(op - 1);
+    }
+
+    system("pause");
+    system("cls");
+}
+
+void PrintaEncontrosDaCategoria(int cat)
+{
+    int i, j, k;
+    for (i = 0; i < numEncontro; i++)
+    {
+        for (j = 0; j < encontros[i].numCategoriaEnc; j++)
+        {
+            if(strcmp(categorias[cat].nome, encontros[i].categoria[j].nome) == 0)
+            {
+                for (k = 0; k < encontros[i].numAmigoEnc; k++)
+                {
+                    printf("Amigo %d: %s\n", k + 1, encontros[i].amigos[k].nome);
+                }
+                for (k = 0; k < encontros[i].numCategoriaEnc; k++)
+                {
+                    printf("Categoria %d: %s\n", k + 1, encontros[i].categoria[k].nome);
+                }
+                printf("Local: %s\n", encontros[i].local.nome_encontro);
+                printf("Data: %d/%d/%d\n", encontros[i].data.dia, encontros[i].data.mes, encontros[i].data.ano);
+                printf("Horario: %d:%d\n", encontros[i].horario.hora, encontros[i].horario.minuto);
+                printf("Descrição: %s\n", encontros[i].desc);
+                printf("\n");
+            }
+        }
+    }
+}
+
 void liberarPonteiros()
 {
     int i;
@@ -1828,6 +1922,19 @@ int valide_data(int dias, int mes, int ano)
         {
             return 0;
         }
+    }
+    return 1;
+}
+
+int validarHora(int hora, int minuto)
+{
+    if(hora >= 24 || hora < 0)
+    {
+        return 0;
+    }
+    if (minuto >= 60 || minuto < 0)
+    {
+        return 0;
     }
     return 1;
 }
