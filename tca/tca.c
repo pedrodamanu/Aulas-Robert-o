@@ -95,8 +95,11 @@ void alterarEncontro(int enc);
 void alterarAmigoEnc(int enc);
 void alterarCategoriaEnc(int enc);
 void excluirAmigo(int amg);
+int ValidarExcluirAmigo(int amg);
 void excluirLocal(int loc);
+int ValidarExcluirLocal(int loc);
 void excluirCategoria(int cat);
+int ValidarExcluirCategoria(int cat);
 void excluirEncontro(int enc);
 void salvarAmigo();
 void salvarLocal();
@@ -109,6 +112,7 @@ void recuperarEncontro();
 int valide_data(int dias, int mes, int ano);
 int validarValor(int num, int param1, int param2);
 int validarHora(int hora, int minuto);
+void ERRO(int id);
 void liberarPonteiros();
 
 TAmigo *amigos;
@@ -178,7 +182,7 @@ void lerMenu()
             return;
         default:
             system("cls");
-            printf("Valor invalido, tente novamente!\n");
+            ERRO(1);
             lerMenu();
             return;
         }
@@ -213,7 +217,7 @@ void manterAmigo()
                 return;
             default:
                 system("cls");
-                printf("Valor invalido, tente novamente!\n");
+                ERRO(1);
                 manterAmigo();
                 return;
         }
@@ -261,7 +265,7 @@ void adicionarAmigo()
         auxDat = valide_data(amigos[numAmigo].data_nas.dia, amigos[numAmigo].data_nas.mes, amigos[numAmigo].data_nas.ano);
         if (auxDat == 0)
         {
-            printf("Valor invalido!\n");
+            ERRO(2);
         }
     }
 
@@ -278,19 +282,34 @@ void adicionarAmigo()
 
 int pesquisarAmigo(int OpFun)
 {
-    int i, opAmigo;
+    int i, j, aux = 0, opAmigo;
     printf("Você deseja selecionar qual amigo?\n");
-    for (i = 0; i < numAmigo; i++)
+    for (i = 0; i < numAmigo - aux; i++)
     {
-        printf("%d) ", i + 1);
-        puts(amigos[i].nome);
+        if (OpFun == 0)
+        {
+            for (j = 0; j < encontros[numEncontro].numAmigoEnc; j++)
+            {
+
+            }
+        }
+        else
+        {
+            printf("%d) ", i + 1);
+            puts(amigos[i].nome);
+        }
     }
     scanf("%d", &opAmigo);
 
-    if(validarValor(opAmigo, 1, numAmigo) == 0)
+    while(validarValor(opAmigo, 1, numAmigo - aux) == 0)
     {
-        pesquisarAmigo(OpFun);
-        //return 0;
+        printf("Você deseja selecionar qual amigo?\n");
+        for (i = 0; i < numAmigo; i++)
+        {
+            printf("%d) ", i + 1);
+            puts(amigos[i].nome);
+        }
+        scanf("%d", &opAmigo);
     }
 
     if (OpFun == 1)
@@ -317,6 +336,7 @@ void alterarAmigo(int amg)
     printf("3) Email (%s)\n", amigos[amg].email); 
     printf("4) Alterar data (%d/%d/%d)\n", amigos[amg].data_nas.dia, amigos[amg].data_nas.mes, amigos[amg].data_nas.ano);
     printf("5) Telefone (%s)\n", amigos[amg].telefone); 
+    printf("0) Voltar\n");
     scanf("%d", &opAlt);
     switch(opAlt)
     {
@@ -352,7 +372,7 @@ void alterarAmigo(int amg)
                 auxDat = valide_data(amigos[amg].data_nas.dia, amigos[amg].data_nas.mes, amigos[amg].data_nas.ano);
                 if (auxDat == 0)
                 {
-                    printf("Valor invalido!\n");
+                    ERRO(2);
                 }
             }
         case 5:
@@ -363,6 +383,14 @@ void alterarAmigo(int amg)
             amigos[amg].telefone = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
             strcpy(amigos[amg].telefone, strAux);
             break;
+        case 0:
+            system("cls");
+            manterAmigo();
+            return;
+        default:
+            ERRO(1);
+            alterarAmigo(amg);
+            return;
         
     }
     system("cls");
@@ -370,7 +398,14 @@ void alterarAmigo(int amg)
 
 void excluirAmigo(int amg)
 {
-    int i, conf;
+    int i, aux, conf;
+    if (ValidarExcluirAmigo(amg) == 0)
+    {
+        ERRO(4);
+        system("pause");
+        system("cls");
+        return;
+    }
     printf("Tem certeza que quer excluir o amigo?\n");
     printf("1) Sim\n2) Não\n");
     
@@ -385,11 +420,34 @@ void excluirAmigo(int amg)
         amigos = (TAmigo *)realloc(amigos, numAmigo * sizeof(TAmigo));
         system("cls");
     }
-    else
+    else if (conf == 2)
     {
         system("cls");
+        manterAmigo();
         return;
     }
+    else
+    {
+        ERRO(1);
+        excluirAmigo(amg);
+        return;
+    }
+}
+
+int ValidarExcluirAmigo(int amg)
+{
+    int i, j;
+    for (i = 0; i < numEncontro; i++)
+    {
+        for (j = 0; j < encontros[i].numAmigoEnc; j++)
+        {
+            if (amg == encontros[i].indiceAmigo[j])
+            {
+                return 0;
+            }
+        }
+    }
+    return 1;
 }
 
 void salvarAmigo()
@@ -505,10 +563,6 @@ void manterLocal()
         printf("3) Excluir local\n");
         printf("0) Voltar\n");
         scanf("%d", &opLocal);
-        if(validarValor(opLocal, 0, 3) == 0)
-        {
-            manterLocal();
-        }
 
         switch(opLocal)
         {
@@ -521,6 +575,13 @@ void manterLocal()
             case 3:
                 pesquisarLocal(2);
                 break;
+            case 0:
+                system("cls");
+                return;
+            default:
+                ERRO(1);
+                manterLocal();
+                return;
         }
     }
 }
@@ -590,11 +651,16 @@ int pesquisarLocal(int OpFun)
     }
     scanf("%d", &opLocal);
 
-    if(validarValor(opLocal, 1, numLocal) == 0)
+    while(validarValor(opLocal, 1, numLocal) == 0)
     {
-        pesquisarLocal(OpFun);
+        printf("Você deseja selecionar qual local?\n");
+        for (i = 0; i < numLocal; i++)
+        {
+            printf("%d) ", i + 1);
+            puts(locais[i].nome_encontro);
+        }
+        scanf("%d", &opLocal);
     }
-
     if (OpFun == 1)
     {
         alterarLocal(opLocal - 1);
@@ -620,12 +686,9 @@ void alterarLocal(int loc)
     printf("4) Bairro (%s)\n", locais[loc].endereco.bairro);
     printf("5) Cidade (%s)\n", locais[loc].endereco.cidade); 
     printf("6) Estado (%s)\n", locais[loc].endereco.estado); 
+    printf("0) Voltar\n");
     scanf("%d", &opAlt);
 
-    if(validarValor(opAlt, 1, 6) == 0)
-    {
-        alterarLocal(loc);
-    }
 
     switch(opAlt)
     {
@@ -673,6 +736,14 @@ void alterarLocal(int loc)
             locais[loc].endereco.estado = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
             strcpy(locais[loc].endereco.estado, strAux);
             break;
+        case 0:
+            system("cls");
+            manterLocal();
+            return;
+        default:
+            ERRO(1);
+            alterarLocal(loc);
+            return;
     }
     system("cls");
 }
@@ -680,6 +751,14 @@ void alterarLocal(int loc)
 void excluirLocal(int loc)
 {
     int i, conf;
+    if (ValidarExcluirAmigo(loc) == 0)
+    {
+        ERRO(5);
+        system("pause");
+        system("cls");
+        return;
+    }
+
     printf("Tem certeza que quer excluir o local?\n");
     printf("1) Sim\n2) Não\n");
     
@@ -694,11 +773,31 @@ void excluirLocal(int loc)
         locais = (TLocal *)realloc(locais, numLocal * sizeof(TLocal));
         system("cls");
     }
-    else
+    else if (conf == 2)
     {
         system("cls");
+        manterLocal();
         return;
     }
+    else
+    {
+        ERRO(1);
+        excluirLocal(loc);
+        return;
+    }
+}
+
+int ValidarExcluirLocal(int loc)
+{
+    int i, j;
+    for (i = 0; i < numEncontro; i++)
+    {
+        if (loc == encontros[i].indLoc)
+        {
+            return 0;
+        }
+    }
+    return 1;
 }
 
 void salvarLocal()
@@ -809,11 +908,6 @@ void manterCategoria()
         printf("0) Voltar\n");
         scanf("%d", &opCategoria);
 
-        if(validarValor(opCategoria, 0, 3) == 0)
-        {
-            manterCategoria();
-        }
-
         switch(opCategoria)
         {
             case 1:
@@ -825,6 +919,13 @@ void manterCategoria()
             case 3:
                 pesquisarCategoria(2);
                 break;
+            case 0:
+                system("cls");
+                return;
+            default:
+                ERRO(1);
+                manterCategoria();
+                return;
         }
     }
 }
@@ -863,9 +964,15 @@ int pesquisarCategoria(int OpFun)
     }
     scanf("%d", &opCategoria);
 
-    if(validarValor(opCategoria, 1, numCategoria) == 0)
+    while(validarValor(opCategoria, 1, numCategoria) == 0)
     {
-        pesquisarCategoria(OpFun);
+        printf("Você deseja selecionar qual categoria?\n");
+        for (i = 0; i < numCategoria; i++)
+        {
+            printf("%d) ", i + 1);
+            puts(categorias[i].nome);
+        }
+        scanf("%d", &opCategoria);
     }
 
     if (OpFun == 1)
@@ -897,6 +1004,12 @@ void alterarCategoria(int cat)
 void excluirCategoria(int cat)
 {
     int i, conf;
+    if(ValidarExcluirCategoria(cat) == 0)
+    {
+        ERRO(6);
+        manterCategoria();
+        return;
+    }
     printf("Tem certeza que quer excluir a categoria?\n");
     printf("1) Sim\n2) Não\n");
     
@@ -911,11 +1024,34 @@ void excluirCategoria(int cat)
         categorias = (TCategoria *)realloc(categorias, numCategoria * sizeof(TCategoria));
         system("cls");
     }
-    else
+    else if (conf == 2)
     {
         system("cls");
+        manterCategoria();
         return;
     }
+    else
+    {
+        ERRO(1);
+        excluirCategoria(cat);
+        return;
+    }
+}
+
+int ValidarExcluirCategoria(int cat)
+{
+    int i, j;
+    for (i = 0; i < numEncontro; i++)
+    {
+        for (j = 0; j < encontros[i].numCategoriaEnc; j++)
+        {
+            if (strcmp(categorias[cat].nome, encontros[i].categoria[j].nome) == 0)
+            {
+                return 0;
+            }
+        }
+    }
+    return 1;
 }
 
 void salvarCategoria()
@@ -987,11 +1123,6 @@ void manterEncontro()
         printf("0) Voltar\n");
         scanf("%d", &opEncontro);
 
-        if(validarValor(opEncontro, 0, 3) == 0)
-        {
-            manterEncontro();
-        }
-
         switch(opEncontro)
         {
             case 1:
@@ -1006,6 +1137,13 @@ void manterEncontro()
                 system("cls");
                 pesquisarEncontro(2);
                 break;
+            case 0:
+                system("cls");
+                return;
+            default:
+                ERRO(1);
+                manterEncontro();
+                return;
         }
     }
 }
@@ -1057,7 +1195,7 @@ void adicionarEncontro()
         }
         else
         {
-            printf("Valor invalido!\n");
+            ERRO(1);
         }
     }
 
@@ -1138,9 +1276,15 @@ int pesquisarEncontro(int OpFun)
     }
     scanf("%d", &opEncontro);
 
-    if(validarValor(opEncontro, 1, numEncontro) == 0)
+    while(validarValor(opEncontro, 1, numEncontro) == 0)
     {
-        pesquisarEncontro(OpFun);
+        printf("Você deseja selecionar qual encontro?\n");
+        for (i = 0; i < numEncontro; i++)
+        {
+            printf("%d) ", i + 1);
+            puts(encontros[i].desc);
+        }
+        scanf("%d", &opEncontro);
     }
 
     if (OpFun == 1)
@@ -1166,14 +1310,22 @@ void alterarEncontro(int enc)
     printf("1) Amigos (");
     for (i = 0; i < encontros[enc].numAmigoEnc; i++)
     {
-        printf("%s, ", encontros[enc].amigos[i].nome);
+        printf("%s", encontros[enc].amigos[i].nome);
+        if (i != encontros[enc].numAmigoEnc - 1)
+        {
+            printf(", ");
+        }
     }
     printf(")\n");
 
     printf("1) Categorias (");
     for (i = 0; i < encontros[enc].numCategoriaEnc; i++)
     {
-        printf("%s, ", encontros[enc].categoria[i].nome);
+        printf("%s", encontros[enc].categoria[i].nome);
+        if (i != encontros[enc].numCategoriaEnc - 1)
+        {
+            printf(", ");
+        }
     }
     printf(")\n");
 
@@ -1884,7 +2036,7 @@ int validarValor(int num, int param1, int param2)
 {
     if(num < param1 || num > param2)
     {
-        printf("Valor digitado eh invalido!\n");
+        ERRO(1);
         return 0;
     }
     return 1;
@@ -1937,4 +2089,32 @@ int validarHora(int hora, int minuto)
         return 0;
     }
     return 1;
+}
+
+void ERRO(int id)
+{
+    if (id == 1)
+    {
+        printf("Valor invalido, tente novamente!\n");
+    }
+    else if (id == 2)
+    {
+        printf("Data invalida, tente novamente!\n");
+    }
+    else if (id == 3)
+    {
+        printf("Horario invalido, tente novamente!\n");
+    }
+    else if (id == 4)
+    {
+        printf("O amigo já está em um encontro, exclua todos os encontros em que ele está primeiro!\n");
+    }
+    else if (id == 5)
+    {
+        printf("Já existe um encontro com este local, exclua todos os encontros com este local primeiro!\n");
+    }
+    else if (id == 6)
+    {
+        printf("Já existe um encontro com esta categoria, exclua todos os encontros com esta categoria primeiro!\n");
+    }
 }

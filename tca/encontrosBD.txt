@@ -1,3 +1,3 @@
-3;2;29;10;2000;19;20;1;Passeio na praia mansa;1@0@2@Cinema#Passeio#
-2;2;29;10;2008;2;40;1;Brincadeiras;0@3@Passeio#Cinema#
+2;2;29;10;2000;19;20;1;Passeio na praia mansa;1@0@Cinema#Passeio#
+3;2;29;10;2008;2;40;1;Brincadeiras;0@3@1@Passeio#Cinema#
 2;2;25;1;2025;19;30;3;Festa;3@0@Jogos#Passeio#
