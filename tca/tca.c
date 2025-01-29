@@ -84,10 +84,12 @@ void adicionarAmigo();
 void adicionarLocal();
 void adicionarCategoria();
 void adicionarEncontro();
-int pesquisarAmigo(int OpFun);
-int pesquisarLocal(int OpFun);
-int pesquisarCategoria(int OpFun);
-int pesquisarEncontro(int OpFun);
+int ValidarAmigoEnc(int amg, int ind);
+int ValidarCategoriaEnc(int cat);
+int selecionarAmigo(int OpFun);
+int selecionarLocal(int OpFun);
+int selecionarCategoria(int OpFun);
+int selecionarEncontro(int OpFun);
 void alterarAmigo(int amg);
 void alterarLocal(int loc);
 void alterarCategoria(int cat);
@@ -207,10 +209,10 @@ void manterAmigo()
                 adicionarAmigo();
                 break;
             case 2:
-                pesquisarAmigo(1);
+                selecionarAmigo(-2);
                 break;
             case 3:
-                pesquisarAmigo(2);
+                selecionarAmigo(-2);
                 break;
             case 0:
                 system("cls");
@@ -280,28 +282,75 @@ void adicionarAmigo()
     system("cls");
 }
 
-int pesquisarAmigo(int OpFun)
+int selecionarAmigo(int OpFun)
 {
     int i, j, aux = 0, opAmigo;
     printf("Você deseja selecionar qual amigo?\n");
-    for (i = 0; i < numAmigo - aux; i++)
+    if (OpFun == -1)
     {
-        if (OpFun == 0)
+        for (i = 0; i < numAmigo && encontros[numEncontro].numAmigoEnc < numAmigo; i++)
         {
             for (j = 0; j < encontros[numEncontro].numAmigoEnc; j++)
             {
-
+                if (strcmp(amigos[i].nome, encontros[numEncontro].amigos[j].nome) == 0)
+                {
+                    aux++;
+                }
             }
+            if (aux == 0)
+            {
+                printf("%d) ", i + 1);
+                puts(amigos[i].nome);
+            }
+            else
+            {
+                aux = 0;
+            }
+        }   
+        if (encontros[numEncontro].numAmigoEnc == numAmigo)
+        {
+            printf("Não há mais amigos disponíveis\n");
+            return NULL;
         }
-        else
+    }
+    else if (OpFun == -2)
+    {
+        for (i = 0; i < numAmigo; i++)
         {
             printf("%d) ", i + 1);
             puts(amigos[i].nome);
         }
     }
+    else
+    {
+        for (i = 0; i < numAmigo && encontros[OpFun].numAmigoEnc < numAmigo; i++)
+        {
+            for (j = 0; j < encontros[OpFun].numAmigoEnc; j++)
+            {
+                if (strcmp(amigos[i].nome, encontros[OpFun].amigos[j].nome) == 0)
+                {
+                    aux++;
+                }
+            }
+            if (aux == 0)
+            {
+                printf("%d) ", i + 1);
+                puts(amigos[i].nome);
+            }
+            else
+            {
+                aux = 0;
+            }
+        }   
+        if (encontros[OpFun].numAmigoEnc == numAmigo)
+        {
+            printf("Não há mais amigos disponíveis\n");
+            return NULL;
+        }
+    }
     scanf("%d", &opAmigo);
 
-    while(validarValor(opAmigo, 1, numAmigo - aux) == 0)
+    while(validarValor(opAmigo, 1, numAmigo) == 0)
     {
         printf("Você deseja selecionar qual amigo?\n");
         for (i = 0; i < numAmigo; i++)
@@ -312,7 +361,7 @@ int pesquisarAmigo(int OpFun)
         scanf("%d", &opAmigo);
     }
 
-    if (OpFun == 1)
+   /* if (OpFun == 1)
     {
         alterarAmigo(opAmigo - 1);
     }
@@ -321,9 +370,9 @@ int pesquisarAmigo(int OpFun)
         excluirAmigo(opAmigo - 1);
     }
     else
-    {
+    {*/
         return opAmigo - 1;
-    }
+   // }
 }
 
 void alterarAmigo(int amg)
@@ -570,10 +619,10 @@ void manterLocal()
                 adicionarLocal();
                 break;
             case 2:
-                pesquisarLocal(1);
+                selecionarLocal(1);
                 break;
             case 3:
-                pesquisarLocal(2);
+                selecionarLocal(2);
                 break;
             case 0:
                 system("cls");
@@ -640,7 +689,7 @@ void adicionarLocal()
     system("cls");
 }
 
-int pesquisarLocal(int OpFun)
+int selecionarLocal(int OpFun)
 {
     int i, opLocal;
     printf("Você deseja selecionar qual local?\n");
@@ -914,10 +963,10 @@ void manterCategoria()
                 adicionarCategoria();
                 break;
             case 2:
-                pesquisarCategoria(1);
+                selecionarCategoria(1);
                 break;
             case 3:
-                pesquisarCategoria(2);
+                selecionarCategoria(2);
                 break;
             case 0:
                 system("cls");
@@ -953,14 +1002,44 @@ void adicionarCategoria()
     system("cls");
 }
 
-int pesquisarCategoria(int OpFun)
+int selecionarCategoria(int OpFun)
 {
-    int i, opCategoria;
+    int i, j, aux = 0, opCategoria;
     printf("Você deseja selecionar qual categoria?\n");
-    for (i = 0; i < numCategoria; i++)
+    if (OpFun == 0)
     {
-        printf("%d) ", i + 1);
-        puts(categorias[i].nome);
+        for (i = 0; i < numCategoria && encontros[numEncontro].numCategoriaEnc < numCategoria; i++)
+        {
+            for (j = 0; j < encontros[numEncontro].numCategoriaEnc; j++)
+            {
+                if (strcmp(categorias[i].nome, encontros[numEncontro].categoria[j].nome) == 0)
+                {
+                    aux++;
+                }
+            }
+            if (aux == 0)
+            {
+                printf("%d) ", i + 1);
+                puts(categorias[i].nome);
+            }
+            else
+            {
+                aux = 0;
+            }
+        }   
+        if (encontros[numEncontro].numCategoriaEnc == numCategoria)
+        {
+            printf("Não há mais categorias disponíveis\n");
+            return NULL;
+        }
+    }
+    else
+    {
+        for (i = 0; i < numCategoria; i++)
+        {
+            printf("%d) ", i + 1);
+            puts(categorias[i].nome);
+        }
     }
     scanf("%d", &opCategoria);
 
@@ -1131,11 +1210,11 @@ void manterEncontro()
                 break;
             case 2:
                 system("cls");
-                pesquisarEncontro(1);
+                selecionarEncontro(1);
                 break;
             case 3:
                 system("cls");
-                pesquisarEncontro(2);
+                selecionarEncontro(2);
                 break;
             case 0:
                 system("cls");
@@ -1169,7 +1248,7 @@ void adicionarEncontro()
 
     encontros[numEncontro].amigos = (TAmigo *)malloc(1 * sizeof(TAmigo));
     encontros[numEncontro].indiceAmigo = (int *)malloc(1 * sizeof(int));
-    aux = pesquisarAmigo(0);
+    aux = selecionarAmigo(-2);
     encontros[numEncontro].indiceAmigo[auxIndice++] = aux;
     encontros[numEncontro].amigos[cont] = amigos[aux];
     while (1)
@@ -1183,10 +1262,24 @@ void adicionarEncontro()
             cont++;
             encontros[numEncontro].amigos = (TAmigo*)realloc(encontros[numEncontro].amigos, (cont + 1) * sizeof(TAmigo));
             encontros[numEncontro].indiceAmigo = (int *)realloc(encontros[numEncontro].indiceAmigo, (auxIndice + 1) * sizeof(int));
-            aux = pesquisarAmigo(0);
-            encontros[numEncontro].indiceAmigo[auxIndice++] = aux;
-            encontros[numEncontro].amigos[cont] = amigos[aux];
-            encontros[numEncontro].numAmigoEnc++;
+            aux = selecionarAmigo(-1);
+            if (aux != NULL)
+            {
+                if (ValidarAmigoEnc(aux, -1) != 0)
+                {
+                    encontros[numEncontro].indiceAmigo[auxIndice++] = aux;
+                    encontros[numEncontro].amigos[cont] = amigos[aux];
+                    encontros[numEncontro].numAmigoEnc++;
+                }
+                else
+                {
+                    ERRO(7);
+                }
+            }
+            else
+            {
+                break;
+            }
         }
         else if (op == 2)
         {
@@ -1201,7 +1294,7 @@ void adicionarEncontro()
 
     auxIndice = 0;
     encontros[numEncontro].categoria = (TCategoria*)malloc(1 * sizeof(TCategoria));
-    aux = pesquisarCategoria(0);
+    aux = selecionarCategoria(5);
     encontros[numEncontro].categoria[cont] = categorias[aux];
     while (1)
     {
@@ -1213,9 +1306,23 @@ void adicionarEncontro()
         {
             cont++;
             encontros[numEncontro].categoria = (TCategoria*)realloc(encontros[numEncontro].categoria, (cont + 1) * sizeof(TCategoria));
-            aux = pesquisarCategoria(0);
-            encontros[numEncontro].categoria[cont] = categorias[aux];
-            encontros[numEncontro].numCategoriaEnc++;
+            aux = selecionarCategoria(0);
+            if (aux != NULL)
+            {
+                if (ValidarCategoriaEnc(aux) != 0)
+                {
+                    encontros[numEncontro].categoria[cont] = categorias[aux];
+                    encontros[numEncontro].numCategoriaEnc++;
+                }
+                else
+                {
+                    ERRO(8);
+                }
+            }
+            else
+            {
+                break;
+            }
         }
         else if (op == 2)
         {
@@ -1228,7 +1335,7 @@ void adicionarEncontro()
         }
     }
 
-    aux = pesquisarLocal(0);
+    aux = selecionarLocal(0);
     encontros[numEncontro].local = locais[aux];
     encontros[numEncontro].indLoc = aux;
 
@@ -1265,7 +1372,47 @@ void adicionarEncontro()
     system("cls");
 }
 
-int pesquisarEncontro(int OpFun)
+int ValidarAmigoEnc(int amg, int ind)
+{
+    int i;
+    if (ind == -1)
+    {
+        for (i = 0; i < encontros[numEncontro].numAmigoEnc; i++)
+        {
+            if (amg == encontros[numEncontro].indiceAmigo[i])
+            {
+                return 0;
+            }
+        }
+        return 1;
+    }
+    else
+    {
+        for (i = 0; i < encontros[ind].numAmigoEnc; i++)
+        {
+            if (amg == encontros[ind].indiceAmigo[i])
+            {
+                return 0;
+            }
+        }
+        return 1;
+    }
+}
+
+int ValidarCategoriaEnc(int cat)
+{
+    int i;
+    for (i = 0; i < encontros[numEncontro].numCategoriaEnc; i++)
+    {
+        if (strcmp(categorias[cat].nome, encontros[numEncontro].categoria[i].nome) == 0)
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int selecionarEncontro(int OpFun)
 {
     int i, opEncontro;
     printf("Você deseja selecionar qual encontro?\n");
@@ -1353,7 +1500,7 @@ void alterarEncontro(int enc)
             break;
         case 3:
             printf("Qual o novo local?\n");
-            aux = pesquisarLocal(0);
+            aux = selecionarLocal(0);
             encontros[enc].local = locais[aux];
             encontros[enc].indLoc = aux;
             break;
@@ -1407,29 +1554,53 @@ void alterarAmigoEnc(int enc)
         case 1:
             encontros[enc].amigos = (TAmigo*)realloc(encontros[enc].amigos, (encontros[enc].numAmigoEnc + 1) * sizeof(TAmigo));
             encontros[enc].indiceAmigo = (int *)realloc(encontros[enc].indiceAmigo, (encontros[enc].numAmigoEnc + 1) * sizeof(int));
-            aux = pesquisarAmigo(0);
-            encontros[enc].indiceAmigo[encontros[enc].numAmigoEnc] = aux;
-            encontros[enc].amigos[encontros[enc].numAmigoEnc] = amigos[aux];
-            encontros[enc].numAmigoEnc++;
-            system("cls");
-            break;
+            aux = selecionarAmigo(enc);
+            if (aux != NULL)
+            {
+                if (ValidarAmigoEnc(aux, enc) != 0)
+                {
+                    encontros[enc].indiceAmigo[encontros[enc].numAmigoEnc] = aux;
+                    encontros[enc].amigos[encontros[enc].numAmigoEnc] = amigos[aux];
+                    encontros[enc].numAmigoEnc++;
+                    break;
+                }
+                else
+                {
+                    ERRO(7);
+                    system("pause");
+                    break;
+                }
+            }
+            else
+            {
+                system("pause");
+                system("cls");
+                break;
+            }
         case 2:
-            aux = pesquisarAmigo(0);
+            aux = selecionarAmigo(-2);
             printf("Tem certeza que quer excluir o amigo?\n");
             printf("1) Sim\n2) Não\n");
             scanf("%d", &conf);
 
             if (conf == 1)
             {
-                for(i = aux; i < encontros[enc].numAmigoEnc - 1; i++)
+                if (encontros[enc].numAmigoEnc == 1)
                 {
-                    encontros[enc].amigos[i] = encontros[enc].amigos[i + 1];
-                    encontros[enc].indiceAmigo[i] = encontros[enc].indiceAmigo[i + 1];
+                    ERRO(9);
                 }
-                encontros[enc].numAmigoEnc--;
-                encontros[enc].amigos = (TAmigo *)realloc(encontros[enc].amigos, encontros[enc].numAmigoEnc * sizeof(TAmigo));
-                encontros[enc].indiceAmigo = (int *)realloc(encontros[enc].indiceAmigo, encontros[enc].numAmigoEnc * sizeof(int));
-                system("cls");
+                else
+                {
+                    for(i = aux; i < encontros[enc].numAmigoEnc - 1; i++)
+                    {
+                        encontros[enc].amigos[i] = encontros[enc].amigos[i + 1];
+                        encontros[enc].indiceAmigo[i] = encontros[enc].indiceAmigo[i + 1];
+                    }
+                    encontros[enc].numAmigoEnc--;
+                    encontros[enc].amigos = (TAmigo *)realloc(encontros[enc].amigos, encontros[enc].numAmigoEnc * sizeof(TAmigo));
+                    encontros[enc].indiceAmigo = (int *)realloc(encontros[enc].indiceAmigo, encontros[enc].numAmigoEnc * sizeof(int));
+                    system("cls");
+                }
             }
             else
             {
@@ -1455,12 +1626,12 @@ void alterarCategoriaEnc(int enc)
     {
         case 1:
             encontros[enc].categoria = (TCategoria *)realloc(encontros[enc].categoria, (encontros[enc].numCategoriaEnc + 1) * sizeof(TCategoria));
-            aux = pesquisarCategoria(0);
+            aux = selecionarCategoria(0);
             encontros[enc].categoria[encontros[enc].numCategoriaEnc].nome = categorias[aux].nome;
             encontros[enc].numCategoriaEnc++;
             break;
         case 2:
-            aux = pesquisarCategoria(0);
+            aux = selecionarCategoria(0);
             printf("Tem certeza que quer excluir a categoria?\n");
             printf("1) Sim\n2) Não\n");
             scanf("%d", &conf);
@@ -1729,7 +1900,7 @@ void listarAmigos()
             PrintaTodosAmigos();
             break;
         case 2:
-            aux = pesquisarAmigo(0);
+            aux = selecionarAmigo(-2);
             system("cls");
             PrintaUmAmigo(aux);
             break;
@@ -1791,7 +1962,7 @@ void listarLocais()
             PrintaTodosLocais();
             break;
         case 2:
-            aux = pesquisarLocal(0);
+            aux = selecionarLocal(0);
             system("cls");
             PrintaUmLocal(aux);
             break;
@@ -1866,7 +2037,7 @@ void listarEncontros()
             PrintaTodosEncontros();
             break;
         case 2:
-            aux = pesquisarEncontro(0);
+            aux = selecionarEncontro(5);
             system("cls");
             PrintaUmEncontro(aux);
             break;
@@ -2116,5 +2287,17 @@ void ERRO(int id)
     else if (id == 6)
     {
         printf("Já existe um encontro com esta categoria, exclua todos os encontros com esta categoria primeiro!\n");
+    }
+    else if (id == 7)
+    {
+        printf("Amigo já adicionado.\n");
+    }
+    else if (id == 8)
+    {
+        printf("Categoria ja adicionada.\n");
+    }
+    else if (id == 9)
+    {
+        printf("Não eh possivel excluir o amigo pois ele é o unico que ainda está cadastrado nesse encontro\n");
     }
 }
