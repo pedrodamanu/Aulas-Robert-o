@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <string.h>         //LEMBRAR DE REVISAR VERIFICAÇÃO DE VALOR DIGITADO PELO USUARIO
+#include <string.h>        
 #include <windows.h>
 
 typedef struct
@@ -115,6 +115,7 @@ void recuperarEncontro();
 int valide_data(int dias, int mes, int ano);
 int validarValor(int num, int param1, int param2);
 int validarHora(int hora, int minuto);
+int validarAmigo(char amg[100]);
 void ERRO(int id);
 void liberarPonteiros();
 
@@ -242,12 +243,23 @@ void adicionarAmigo()
         amigos = (TAmigo *)realloc(amigos, (numAmigo + 1) * sizeof(TAmigo));
     }
 
-    printf("Qual o nome do amigo?\n");
-    fflush(stdin);
-    gets(strAux);
-    fflush(stdin);
-    amigos[numAmigo].nome = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
-    strcpy(amigos[numAmigo].nome, strAux);
+    while (1)
+    {
+        printf("Qual o nome do amigo?\n");
+        fflush(stdin);
+        gets(strAux);
+        fflush(stdin);
+        if (validarAmigo(strAux) == 1)
+        {
+            amigos[numAmigo].nome = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+            strcpy(amigos[numAmigo].nome, strAux);
+            break;
+        }
+        else
+        {
+            ERRO(11);
+        }
+    }
 
     printf("Qual o apelido do amigo?\n");
     fflush(stdin);
@@ -2345,6 +2357,19 @@ int validarHora(int hora, int minuto)
     return 1;
 }
 
+int validarAmigo(char amg[100])
+{
+    int i;
+    for (i = 0; i < numAmigo; i++)
+    {
+        if (strcmp(amg, amigos[i].nome) == 0)
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
 void ERRO(int id)
 {
     if (id == 1)
@@ -2386,5 +2411,9 @@ void ERRO(int id)
     else if (id == 10)
     {
         printf("Não eh possivel excluir a categoria pois ela é a unica que ainda está cadastrada nesse encontro\n");  
+    }
+    else if (id == 11)
+    {
+        printf("Já existe um amigo com esse nome\n");
     }
 }
