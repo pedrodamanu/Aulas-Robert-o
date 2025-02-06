@@ -120,6 +120,7 @@ int valide_data(int dias, int mes, int ano);
 int validarValor(int num, int param1, int param2);
 int validarHora(int hora, int minuto);
 int validarAmigo(char amg[100]);
+int validarCategoria(char cat[100]); 
 void ERRO(int id);
 void liberarPonteiros();
 
@@ -358,6 +359,13 @@ void alterarAmigo(int amg)
 {
     int opAlt, auxDat = 0;
     char strAux[100];
+    if (ValidarExcluirAmigo(amg) == 0)
+    {
+        ERRO(4);
+        system("pause");
+        system("cls");
+        return;
+    }
     printf("Você deseja alterar:\n");
     printf("1) Nome (%s)\n", amigos[amg].nome);
     printf("2) Apelido (%s)\n", amigos[amg].apelido);
@@ -699,6 +707,15 @@ void alterarLocal(int loc)
 {
     int opAlt, auxDat = 0;
     char strAux[100];
+
+    if (ValidarExcluirLocal(loc) == 0)
+    {
+        ERRO(5);
+        system("pause");
+        system("cls");
+        return;
+    }
+
     printf("Você deseja alterar:\n");
     printf("1) Local do encontro (%s)\n", locais[loc].nome_encontro);
     printf("2) Logradouro (%s)\n", locais[loc].endereco.logradouro);
@@ -771,7 +788,7 @@ void alterarLocal(int loc)
 void excluirLocal(int loc)
 {
     int i, conf;
-    if (ValidarExcluirAmigo(loc) == 0)
+    if (ValidarExcluirLocal(loc) == 0)
     {
         ERRO(5);
         system("pause");
@@ -964,12 +981,23 @@ void adicionarCategoria()
         categorias = (TCategoria *)realloc(categorias, (numCategoria + 1) * sizeof(TCategoria));
     }
 
-    printf("Qual a categoria?\n");
-    fflush(stdin);
-    gets(strAux);
-    fflush(stdin);
-    categorias[numCategoria].nome = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
-    strcpy(categorias[numCategoria].nome, strAux);
+    while(1)
+    {
+        printf("Qual a categoria?\n");
+        fflush(stdin);
+        gets(strAux);
+        fflush(stdin);
+        if(validarCategoria(strAux) == 1)
+        {
+            categorias[numCategoria].nome = (char *)malloc((strlen(strAux) + 1) * sizeof(char));
+            strcpy(categorias[numCategoria].nome, strAux);
+            break;
+        }
+        else
+        {
+            ERRO(12);
+        }
+    }
 
     numCategoria++;
     system("cls");
@@ -1039,6 +1067,13 @@ int selecionarCategoria(int ind)
 void alterarCategoria(int cat)
 {
     char strAux[100];
+    if(ValidarExcluirCategoria(cat) == 0)
+    {
+        ERRO(6);
+        system("pause");
+        manterCategoria();
+        return;
+    }
     printf("Qual o novo nome da categoria?\n");
     fflush(stdin);
     gets(strAux);
@@ -1054,6 +1089,7 @@ void excluirCategoria(int cat)
     if(ValidarExcluirCategoria(cat) == 0)
     {
         ERRO(6);
+        system("pause");
         manterCategoria();
         return;
     }
@@ -2260,6 +2296,7 @@ int validarValor(int num, int param1, int param2)
     }
     return 1;
 }
+
 int valide_data(int dias, int mes, int ano)
 {
     if (mes > 12 || mes <= 0)
@@ -2323,6 +2360,19 @@ int validarAmigo(char amg[100])
     return 1;
 }
 
+int validarCategoria(char cat[100])
+{
+    int i;
+    for (i = 0; i < numCategoria; i++)
+    {
+        if (strcmp(cat, categorias[i].nome) == 0)
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
 void ERRO(int id)
 {
     if (id == 1)
@@ -2368,6 +2418,10 @@ void ERRO(int id)
     else if (id == 11)
     {
         printf("Já existe um amigo com esse nome\n");
+    }
+    else if (id == 12)
+    {
+        printf("Ja existe uma categoria com esse nome\n");
     }
 }
 
